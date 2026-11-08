@@ -1,0 +1,11 @@
+# Installed by setup.sh. GFPGAN, basicsr and facexlib are installed separately by setup.sh
+# (from their official source packages, with a small Python 3.13+ compatibility fix).
+
+# Image processing (local, CPU)
+numpy
+opencv-python-headless
+pillow
+
+# Face restoration runtime (local: Apple GPU via MPS / NVIDIA GPU via CUDA / CPU fallback)
+torch
+torchvision

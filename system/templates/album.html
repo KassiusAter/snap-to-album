@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{PAGE_TITLE}}</title>
+<style>
+:root{
+  --paper:#f4efe6; --paper2:#ebe3d5; --text:#2b2620; --muted:#7a6f62;
+  --board:#2a2d2e; --chalk:#ecebe4; --accent:#9c4a2f; --line:#d8cdbb;
+  --shadow:0 1px 2px rgba(40,30,20,.12),0 6px 18px rgba(40,30,20,.10);
+  --menu:260px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#1d1b19; --paper2:#26231f; --text:#ece6dc; --muted:#a39888;
+  --board:#121414; --chalk:#e6e4dc; --accent:#d98b6a; --line:#3a352e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--paper);color:var(--text);
+  font:17px/1.55 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+a{color:inherit}
+
+/* menu */
+nav{position:fixed;inset:0 auto 0 0;width:var(--menu);overflow-y:auto;padding:28px 22px 40px;
+  background:var(--paper2);border-right:1px solid var(--line);font-size:15px}
+nav .mark{font-size:26px;margin:0 0 2px;letter-spacing:.02em}
+nav .sub{color:var(--muted);font-size:13px;margin:0 0 22px}
+nav ul{list-style:none;margin:0;padding:0}
+.menu-group{display:block;margin:16px 0 4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+nav li li a{display:block;padding:3px 0 3px 10px;border-left:2px solid transparent;text-decoration:none;color:var(--muted);line-height:1.3}
+nav li li a:hover{color:var(--text)}
+nav li li a.active{color:var(--text);border-left-color:var(--accent)}
+#menu-toggle{display:none}
+
+main{margin-left:var(--menu);padding:0 48px 120px;max-width:calc(1240px + var(--menu))}
+
+/* cover */
+.cover{min-height:56vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0 40px;border-bottom:1px solid var(--line)}
+.cover h1{font-size:clamp(48px,8vw,96px);font-weight:400;margin:0;line-height:1}
+.cover .sub{font-size:20px;color:var(--muted);margin:10px 0 28px;font-style:italic}
+.cover p.intro{max-width:34em;margin:0}
+.cover .tip{margin-top:26px;font-size:14px;color:var(--muted)}
+
+/* chapter */
+.chapter{padding:72px 0 8px}
+.chapter header .group{margin:0;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.chapter h2{font-size:clamp(28px,4vw,42px);font-weight:400;margin:4px 0 2px;line-height:1.15}
+.chapter .date{margin:0;color:var(--muted);font-style:italic}
+.album-caption{margin:22px 0 28px;padding:18px 24px;background:var(--board);color:var(--chalk);border-radius:3px;
+  font:22px/1.4 "Bradley Hand","Segoe Print","Chalkboard","Comic Sans MS",cursive;max-width:40em;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.35)}
+.album-caption::before{content:"{{CAPTION_LABEL}}";display:block;font:11px/1 -apple-system,system-ui,sans-serif;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-bottom:10px}
+
+/* photos: rows keep the album order (clippings stay where they were pasted) */
+.featured,.grid{display:flex;flex-wrap:wrap;gap:14px}
+.featured{gap:22px;margin-bottom:26px}
+.photo{margin:0;flex:calc(var(--r) * 190px) var(--r) 0;min-width:0;cursor:zoom-in}
+.featured .photo{flex:calc(var(--r) * 420px) var(--r) 0;max-width:calc(var(--r) * 72vh)}
+.grid .photo{max-width:calc(var(--r) * 300px)}
+/* the last incomplete row does not stretch across the full width */
+.featured::after,.grid::after{content:"";flex:1 0 0;flex-grow:1000}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:var(--r);object-fit:cover;background:var(--paper2);
+  box-shadow:var(--shadow);border:5px solid #fbf9f4}
+.clipping img{border:0;transform:rotate(-.6deg)}
+.photo figcaption{font-size:13px;color:var(--muted);padding-top:5px;display:flex;gap:8px;justify-content:space-between}
+.label{font:11px/1.6 ui-monospace,Menlo,monospace;opacity:.7;margin-left:auto}
+.page{margin:0 0 26px}
+.page-head{display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.page-head::after{content:"";flex:1;height:1px;background:var(--line);order:1}
+.page-head button{order:2}
+button.whole{font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--accent);
+  border:1px solid var(--line);border-radius:20px;padding:4px 12px;cursor:pointer}
+button.whole:hover{border-color:var(--accent)}
+.photo[data-back]{position:relative}
+.photo[data-back]::after{content:"↻ back";position:absolute;top:12px;right:12px;font:11px/1 ui-monospace,Menlo,monospace;
+  background:rgba(20,16,12,.72);color:#f4efe6;padding:4px 7px;border-radius:10px;pointer-events:none}
+
+/* viewer */
+#lb{position:fixed;inset:0;background:rgba(14,12,10,.96);display:none;z-index:50;color:#eee;
+  font:14px/1.4 -apple-system,system-ui,sans-serif}
+#lb.open{display:flex;flex-direction:column}
+#lb .stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:10px}
+#lb img{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-out;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#lb .bar{display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap}
+#lb .bar .cap{flex:1;min-width:120px;opacity:.85}
+#lb button{font:inherit;background:rgba(255,255,255,.08);color:#eee;border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;padding:6px 14px;cursor:pointer}
+#lb button:hover{background:rgba(255,255,255,.16)}
+#lb button[aria-pressed="true"]{background:#eee;color:#111}
+#lb button[hidden]{display:none}
+
+@media (max-width:900px){
+  nav{transform:translateX(-100%);transition:transform .25s;z-index:40;width:min(86vw,320px);box-shadow:var(--shadow)}
+  nav.open{transform:none}
+  #menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:45;font:14px/1 -apple-system,system-ui,sans-serif;
+    background:var(--paper2);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:9px 15px;box-shadow:var(--shadow)}
+  main{margin-left:0;padding:0 16px 80px}
+  .cover{min-height:60vh;padding-top:80px}
+  .photo{flex-basis:calc(var(--r) * 130px)}
+  .featured .photo{flex-basis:calc(var(--r) * 300px);max-width:100%}
+  .grid .photo{max-width:100%}
+  .album-caption{font-size:19px;padding:14px 16px}
+}
+</style>
+</head>
+<body>
+<button id="menu-toggle" aria-controls="menu">☰ Chapters</button>
+<nav id="menu">
+  <p class="mark">{{TITLE}}</p>
+  <p class="sub">{{SUBTITLE}}</p>
+  <ul>
+{{MENU}}
+  </ul>
+</nav>
+<main>
+  <section class="cover">
+    <h1>{{TITLE}}</h1>
+    <p class="sub">{{SUBTITLE}}</p>
+    <p class="intro">{{INTRO}}</p>
+    <p class="tip">{{TIP}}</p>
+  </section>
+{{CHAPTERS}}
+</main>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="stage"><img alt=""></div>
+  <div class="bar">
+    <button data-act="prev" aria-label="Previous">←</button>
+    <button data-act="next" aria-label="Next">→</button>
+    <span class="cap"></span>
+    <button data-act="back" aria-pressed="false" hidden>back of photo</button>
+    <button data-act="original" aria-pressed="false">original</button>
+    <button data-act="close">close ✕</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var photos=[].slice.call(document.querySelectorAll('.photo'));
+  var lb=document.getElementById('lb'), img=lb.querySelector('img'), cap=lb.querySelector('.cap'),
+      bOrig=lb.querySelector('[data-act="original"]'), bBack=lb.querySelector('[data-act="back"]'),
+      i=-1, original=false, page=false, back=false;
+
+  function show(){
+    var f=photos[i], id=f.dataset.id, el=f.querySelector('img'), b=f.dataset.back;
+    if(!b)back=false;
+    bBack.hidden=!b;bBack.setAttribute('aria-pressed',back);
+    img.src=back?b:original?'original/'+id+'.webp':(el.dataset.full||el.currentSrc||el.src);
+    var t=f.querySelector('figcaption').firstChild;
+    cap.textContent=(t&&t.nodeType===3&&t.textContent?t.textContent+' · ':'')+id+'  ('+(i+1)+' / '+photos.length+')';
+  }
+  function open(n){i=n;page=false;back=false;bOrig.style.display='';show();lb.classList.add('open');document.body.style.overflow='hidden'}
+  function close(){lb.classList.remove('open');document.body.style.overflow='';img.src=''}
+  function step(d){if(page)return;back=false;i=(i+d+photos.length)%photos.length;show()}
+
+  photos.forEach(function(f,n){f.addEventListener('click',function(){open(n)})});
+  document.querySelectorAll('button.whole').forEach(function(b){b.addEventListener('click',function(){
+    page=true;bOrig.style.display='none';bBack.hidden=true;img.src=b.dataset.src;
+    cap.textContent=b.parentNode.querySelector('span').textContent;
+    lb.classList.add('open');document.body.style.overflow='hidden';
+  })});
+  lb.addEventListener('click',function(e){
+    var a=e.target.dataset&&e.target.dataset.act;
+    if(a==='prev')step(-1); else if(a==='next')step(1); else if(a==='close')close();
+    else if(a==='back'){back=!back;show()}
+    else if(a==='original'){original=!original;bOrig.setAttribute('aria-pressed',original);show()}
+    else if(e.target===img)close();
+  });
+  document.addEventListener('keydown',function(e){
+    if(!lb.classList.contains('open'))return;
+    if(e.key==='Escape')close(); else if(e.key==='ArrowLeft')step(-1); else if(e.key==='ArrowRight')step(1);
+  });
+  var x0=null;
+  lb.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>50)step(dx<0?1:-1);x0=null});
+
+  // menu: mobile toggle + highlight the current chapter
+  var nav=document.getElementById('menu');
+  document.getElementById('menu-toggle').addEventListener('click',function(){nav.classList.toggle('open')});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A')nav.classList.remove('open')});
+  var links={};nav.querySelectorAll('a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(z){z.forEach(function(x){
+      if(x.isIntersecting){for(var k in links)links[k].classList.remove('active');
+        var a=links[x.target.id];if(a){a.classList.add('active');a.scrollIntoView({block:'nearest'})}}
+    })},{rootMargin:'-40% 0px -55% 0px'});
+    document.querySelectorAll('.chapter').forEach(function(s){io.observe(s)});
+  }
+})();
+</script>
+</body>
+</html>

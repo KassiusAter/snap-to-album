@@ -1,0 +1,56 @@
+<!-- Captioning mode: injected only by caption_server.py, never part of the finished album. -->
+<style>
+.cap-field{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 11px;
+  font:17px/1.35 Georgia,serif;color:var(--text);background:#fffdf8;border:1.5px solid var(--line);border-radius:6px}
+.cap-field:focus{outline:none;border-color:var(--accent)}
+.photo.captioned .cap-field{border-color:#7a9a6a}
+.cap-field.error{border-color:#c0392b;background:#fdecea}
+.cap-state{font-size:13px;color:var(--muted);min-height:18px;padding-top:2px}
+#cap-panel{position:fixed;top:14px;right:14px;z-index:60;background:var(--paper2);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;box-shadow:var(--shadow);font-size:15px}
+#cap-panel b{color:var(--accent)}
+#cap-panel label{display:block;margin-top:6px;cursor:pointer}
+body.only-empty .photo.captioned{display:none}
+@media (prefers-color-scheme:dark){.cap-field{background:#2b2723}}
+</style>
+<div id="cap-panel">Captioned <b id="cap-count">0</b> of <span id="cap-total">0</span>
+  <label><input type="checkbox" id="cap-filter"> show only photos without a caption</label></div>
+<script>
+(function(){
+  var photos=[].slice.call(document.querySelectorAll('.photo')), fields=[];
+  function current(f){var t=f.querySelector('figcaption').firstChild;return t&&t.nodeType===3?t.textContent:''}
+  function count(){
+    document.getElementById('cap-count').textContent=photos.filter(function(f){return f.classList.contains('captioned')}).length;
+    document.getElementById('cap-total').textContent=photos.length;
+  }
+  function save(f,inp,state,next){
+    var text=inp.value.trim();
+    state.textContent='saving…';
+    fetch('/caption',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:f.dataset.id,text:text})})
+    .then(function(r){if(!r.ok)throw r;return r.json()})
+    .then(function(){
+      inp.classList.remove('error');
+      var c=f.querySelector('figcaption'), t=c.firstChild;
+      if(t&&t.nodeType===3)t.textContent=text; else c.insertBefore(document.createTextNode(text),c.firstChild);
+      f.querySelector('img').alt=text||f.dataset.id;
+      f.classList.toggle('captioned',!!text);
+      state.textContent=text?'✓ saved':'caption removed';
+      count();
+      if(next&&fields[next]){fields[next].focus();fields[next].scrollIntoView({block:'center',behavior:'smooth'})}
+    })
+    .catch(function(){inp.classList.add('error');state.textContent='Not saved — is the captioning window still open? Press Enter again.'});
+  }
+  photos.forEach(function(f,n){
+    var inp=document.createElement('input'), state=document.createElement('div');
+    inp.type='text';inp.className='cap-field';inp.value=current(f);
+    inp.placeholder='Who, where, when… (Enter saves)';
+    state.className='cap-state';
+    if(inp.value)f.classList.add('captioned');
+    inp.addEventListener('click',function(e){e.stopPropagation()});
+    inp.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();save(f,inp,state,n+1)}});
+    f.appendChild(inp);f.appendChild(state);fields.push(inp);
+  });
+  document.getElementById('cap-filter').addEventListener('change',function(e){document.body.classList.toggle('only-empty',e.target.checked)});
+  count();
+})();
+</script>

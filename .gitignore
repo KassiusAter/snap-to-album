@@ -1,0 +1,19 @@
+# Your photos and albums stay on your computer
+New photos/*
+Albums/*
+!New photos/.gitkeep
+!Albums/.gitkeep
+
+# Created on your computer by setup and by working on albums
+system/.venv/
+system/models/
+system/config.json
+system/work/
+system/folder_version/
+system/used photos/
+system/test photo/
+
+# macOS / Python
+.DS_Store
+__pycache__/
+*.pyc

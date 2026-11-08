@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose Enhancement</title>
+<style>
+  :root { --bg: #f4f1ec; --fg: #2b2622; --muted: #7a6f66; --accent: #9a5b2f; --card: #fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1c1a18; --fg: #ece6df; --muted: #a39a90; --accent: #d9955f; --card: #262320; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  header, main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 8px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  header p { margin: 4px 0; color: var(--muted); }
+  section { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .switch { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .switch button { border: 1px solid var(--muted); background: transparent; color: var(--fg);
+                   border-radius: 999px; padding: 5px 13px; font: inherit; font-size: 14px; cursor: pointer; }
+  .switch button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #desc { color: var(--muted); font-size: 14px; margin: 0 0 12px; min-height: 21px; }
+  code { background: rgba(127,127,127,.15); padding: 2px 6px; border-radius: 4px; }
+  .cmp { position: relative; width: 100%; max-height: 80vh; margin: 0 auto; overflow: hidden; border-radius: 6px;
+         cursor: ew-resize; user-select: none; touch-action: none; }
+  .cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+  .cmp .after { clip-path: inset(0 0 0 50%); }
+  .line { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #fff;
+          box-shadow: 0 0 4px rgba(0,0,0,.6); pointer-events: none; }
+  .line::after { content: "⇆"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                 background: #fff; color: #333; border-radius: 50%; width: 30px; height: 30px; display: grid; place-items: center; }
+  .tag { position: absolute; top: 8px; padding: 2px 8px; border-radius: 4px; font-size: 13px;
+         background: rgba(0,0,0,.55); color: #fff; pointer-events: none; }
+  .tag.l { left: 8px; } .tag.r { right: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Choose how your photos will be enhanced</h1>
+  <p>Drag across the photo: left is the plain crop, right is the selected option. Look closely at faces — a face
+     restorer can change features, so pick the strongest option that still looks like the real person.</p>
+  <p>Pick <b>one base enhancement</b> (mandatory). The <b>AI add-ons</b> are optional extras on top of it.
+     Tell Claude your choice, or run <code>system/.venv/bin/python system/scripts/config.py <span id="cmd">…</span></code></p>
+</header>
+<main>
+  <section>
+    <div class="switch" id="switch"></div>
+    <p id="desc"></p>
+    <div class="cmp" id="cmp">
+      <img class="before" id="before" src="img/original.jpg" alt="before" draggable="false">
+      <img class="after" id="after" alt="enhanced" draggable="false">
+      <div class="line" id="line"></div>
+      <span class="tag l" id="tagl">original crop</span><span class="tag r" id="tag"></span>
+    </div>
+  </section>
+</main>
+<script>
+/*DATA*/
+const box = document.getElementById("cmp"), after = document.getElementById("after"),
+      line = document.getElementById("line"), tag = document.getElementById("tag");
+const BEFORE = {original: "original crop", colors: "colors only", gray: "black-and-white copy", detail_plain: "plain enlargement"};
+function pick(o, b) {
+  box.style.aspectRatio = o.w + "/" + o.h;
+  box.style.maxWidth = `calc(80vh * ${o.w / o.h})`;
+  document.getElementById("before").src = `img/${o.before}.jpg`;
+  document.getElementById("tagl").textContent = BEFORE[o.before] || o.before;
+  after.src = `img/${o.file}.jpg`; tag.textContent = o.label;
+  document.getElementById("desc").textContent = o.note;
+  document.getElementById("cmd").textContent = o.cmd;
+  document.querySelectorAll("#switch button").forEach(x => x.classList.toggle("active", x === b));
+}
+DATA.options.forEach((o, i) => {
+  const b = document.createElement("button");
+  b.textContent = o.label; b.onclick = () => pick(o, b);
+  document.getElementById("switch").appendChild(b);
+  if (i === Math.min(1, DATA.options.length - 1)) pick(o, b);
+});
+const move = e => {
+  const r = box.getBoundingClientRect();
+  const p = Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100));
+  after.style.clipPath = `inset(0 0 0 ${p}%)`; line.style.left = p + "%";
+};
+let drag = false;
+box.addEventListener("pointerdown", e => { e.preventDefault(); drag = true; box.setPointerCapture(e.pointerId); move(e); });
+box.addEventListener("pointermove", e => { if (drag) move(e); });
+["pointerup", "pointercancel"].forEach(t => box.addEventListener(t, () => { drag = false; }));
+</script>
+</body>
+</html>
