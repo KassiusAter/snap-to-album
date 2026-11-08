@@ -125,6 +125,12 @@ launcher are, in one or two sentences.
 
 ## 6. Bonus (experimental): albums from the Apple Photos library
 
+**Only when the user explicitly asks for it** ("find trips in my Photos", "make an album from my
+Photos", …). Never open, read or scan the Photos library on your own — not on "create a photo album",
+not to check something, not during the first run. If `New photos/` is empty and the user only said
+"create a photo album", you may *ask* whether they want to use photos from the Photos app instead;
+touch the library only after they say yes.
+
 For digital photos already in the Photos app (macOS). Nothing is copied, moved or deleted — an
 album in Photos only refers to photos that are already there.
 
@@ -155,6 +161,8 @@ macOS may ask once for permission to control Photos, or for Full Disk Access to 
    *Not yet:* captions typed for these albums are not written back into the Photos app.
 
 ## Rules
+
+- The Apple Photos library is accessed **only on the user's explicit request** (section 6).
 
 - The project makes **offline archives for personal and family use**. It never uploads or publishes
   anything, and you do not offer publishing on your own.

@@ -63,7 +63,8 @@ in my Photos"**. It looks at when and where your photos were taken, finds your t
 of them are not in any album yet — *"Lisbon, 12–15 May 2019, 420 photos — no album yet"*. Pick the
 ones you want and Claude creates the albums in the Photos app, including the photos from the airport
 on the way there and back. Nothing is copied or deleted; an album only points to photos you already
-have. Claude can also pick the **best photos of a trip** (by Apple's own quality score, without
+have. Claude only looks into your Photos library when you ask it to — never on its own, and macOS
+asks you for permission the first time. Claude can also pick the **best photos of a trip** (by Apple's own quality score, without
 near-duplicates, spread over all days) and turn them into a Snap to Album page for captioning and
 sharing — say *"make an album for captioning from the Lisbon trip"*.
 
