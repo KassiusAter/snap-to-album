@@ -8,7 +8,9 @@ Photograph the pages with your phone → copy the photos into the `New photos` f
 **Already have thousands of photos in the Apple Photos app on your Mac?** Snap to Album finds your trips
 by time and place and offers two things *(experimental — see below)*:
 - **an offline album for captioning and private sharing** — the best shots, picked by the Photos app's
-  own aesthetic score, in the same kind of album file as above;
+  own aesthetic score, in the same kind of album file as above. Captions typed in the captioning
+  window also go **back onto the original photos in the Photos app** (their Caption field) — no
+  copies, no duplicates, synced by iCloud and searchable in Photos;
 - **a new album right in the Apple Photos app, and nothing else** — just order in your library: all photos
   of the trip in one album next to your others, no files created, nothing copied or moved.
 

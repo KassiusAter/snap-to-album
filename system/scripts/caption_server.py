@@ -130,6 +130,11 @@ def flush():
                 by_album.setdefault(name, (a, {}))[1][j] = text
         for name, (a, caps) in by_album.items():
             write_into_albums(caps, [(name, a)], kinds=("album",))
+            if a.get("source") == "photos":
+                # albums made from the Photos app: the caption also goes onto the original photo there
+                import photos_captions
+                sent = photos_captions.write(photos_captions.for_album(name, caps))
+                print(f"  {sent} caption(s) written into the Photos app")
             for j, text in caps.items():
                 try:
                     metadata.update(name, j)

@@ -12,7 +12,9 @@
 2. Lets Photos export them (it downloads originals from iCloud if needed) into a temporary folder,
    keeps a resized working copy (2400 px) for rebuilding and deletes the raw exports.
 3. Builds the album: one chapter per day, titled with Apple's place names; no cropping or color
-   restoration (digital photos do not need it). Then creates the captioning launcher.
+   restoration (digital photos do not need it). Captions already in the Photos app are pre-filled.
+   Then creates the captioning launcher — captions typed there also go back into the Photos app
+   (see photos_captions.py).
 
 Nothing in the Photos library is changed. The result is a normal Snap to Album: Albums/<file>.html
 plus "<file> – add captions.command".
@@ -154,6 +156,9 @@ def main(number, title, count):
                          "date": f"{day.day}. {day.month}. {day.year}",
                          "featured": [r["id"] for r in sorted(top, key=lambda r: r["t"])],
                          "grid": [r["id"] for r in items if r not in top]})
+    # captions already in the Photos app are pre-filled, so the captioning window shows (and keeps) them
+    import photos_captions
+    existing = photos_captions.read([r["uuid"] for r in chosen])
     first, last = chosen[0]["day"], chosen[-1]["day"]
     span = f"{first.day}. {first.month}. – {last.day}. {last.month}. {last.year}"
     album = {"title": title, "subtitle": span, "source": "photos", "lang": "en",
@@ -161,6 +166,8 @@ def main(number, title, count):
              "caption_label": "Place",
              "output_file": f"{title}.html" if str(first.year) in title else f"{first.year} {title}.html",
              "folder": name,
+             "photos_ids": {r["id"]: r["uuid"] for r in chosen},   # photo id → photo in the Photos app
+             "captions": {r["id"]: existing[r["uuid"]] for r in chosen if existing.get(r["uuid"])},
              "chapters": chapters}
     json.dump(album, open(os.path.join(d, "album.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 

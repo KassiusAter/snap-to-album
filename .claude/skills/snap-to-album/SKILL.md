@@ -159,7 +159,11 @@ macOS may ask once for permission to control Photos, or for Full Disk Access to 
    copies, deletes the raw exports and builds a normal Snap to Album: one chapter per day titled with
    Apple's place names, no cropping or restoration, plus the captioning launcher. Suggest 30–60
    photos for a weekend, more for longer trips. Ask the user to look at the result.
-   *Not yet:* captions typed for these albums are not written back into the Photos app.
+   Captions typed in the captioning window are also written onto the original photos in the Photos
+   app (their Caption field, via `photos_captions.py`) a moment after each Enter; existing Photos
+   captions are pre-filled. `PY photos_captions sync <album>` sends all captions at once. Mention this
+   to the user — it is the main advantage: grandparents caption in the browser, the captions end up
+   in Photos on all their devices. Never re-import photos into Photos (that would create duplicates).
 
 ## Rules
 
