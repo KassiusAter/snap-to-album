@@ -6,9 +6,11 @@ Photograph the pages with your phone → copy the photos into the `New photos` f
 **RUN Snap to Album** → sit down with your grandparents and caption the photos together.
 
 **Already have thousands of photos in the Photos app on your Mac?** Snap to Album finds your trips
-by time and place, picks the best shots by Photos' own aesthetic score and turns them into the same
-offline albums for captioning and private sharing — or simply creates the albums for you right in
-Photos. *(experimental — see below)*
+by time and place and offers two things *(experimental — see below)*:
+- **an offline album for captioning and private sharing** — the best shots, picked by Photos' own
+  aesthetic score, in the same kind of album file as above;
+- **a new album right in the Photos app, and nothing else** — just order in your library: all photos
+  of the trip in one album next to your others, no files created, nothing copied or moved.
 
 You get a **private offline archive**: one file per album that opens in any web browser, even
 offline, and that you can copy to a USB stick or send to your family. Inside: chapters on a
