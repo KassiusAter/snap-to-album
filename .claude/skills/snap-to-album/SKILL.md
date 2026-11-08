@@ -8,7 +8,8 @@ description: Snap to Album — turns phone photos (iPhone, Android), camera shot
 Two sources, one result — a private offline HTML album with a captioning window:
 - **Paper albums:** photographs of album pages and loose prints (sections 0–5).
 - **Apple Photos app:** digital photos already on the Mac — trips found by time and GPS, the best
-  shots picked by Photos' own aesthetic score, or albums created right in Photos (section 6).
+  shots picked by the Photos app's own aesthetic score, or albums created right in the Apple Photos
+  app (section 6).
 
 The user photographs album pages with a phone or camera (or scans them), drops the photos into
 `New photos/`, double-clicks

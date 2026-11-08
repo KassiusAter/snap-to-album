@@ -5,11 +5,11 @@
 Photograph the pages with your phone → copy the photos into the `New photos` folder → double-click
 **RUN Snap to Album** → sit down with your grandparents and caption the photos together.
 
-**Already have thousands of photos in the Photos app on your Mac?** Snap to Album finds your trips
+**Already have thousands of photos in the Apple Photos app on your Mac?** Snap to Album finds your trips
 by time and place and offers two things *(experimental — see below)*:
-- **an offline album for captioning and private sharing** — the best shots, picked by Photos' own
-  aesthetic score, in the same kind of album file as above;
-- **a new album right in the Photos app, and nothing else** — just order in your library: all photos
+- **an offline album for captioning and private sharing** — the best shots, picked by the Photos app's
+  own aesthetic score, in the same kind of album file as above;
+- **a new album right in the Apple Photos app, and nothing else** — just order in your library: all photos
   of the trip in one album next to your others, no files created, nothing copied or moved.
 
 You get a **private offline archive**: one file per album that opens in any web browser, even
@@ -56,14 +56,14 @@ Claude does all the technical work. You only answer simple questions.
    no menus: every caption goes straight into the album and into the photo file's own data.
    Afterwards Claude can sort the photos by your captions, keeping them in chronological order.
 
-## Albums from your Apple Photos library *(experimental)*
+## Albums from the Apple Photos app *(experimental)*
 
-Already have thousands of digital photos in the Photos app on your Mac? Ask Claude to **"find trips
-in my Photos"**. It looks at when and where your photos were taken, finds your trips and shows which
+Already have thousands of digital photos in the Apple Photos app on your Mac? Ask Claude to
+**"find trips in my Photos app"**. It looks at when and where your photos were taken, finds your trips and shows which
 of them are not in any album yet — *"Lisbon, 12–15 May 2019, 420 photos — no album yet"*. Pick the
-ones you want and Claude creates the albums in the Photos app, including the photos from the airport
+ones you want and Claude creates the albums in the Apple Photos app, including the photos from the airport
 on the way there and back. Nothing is copied or deleted; an album only points to photos you already
-have. Claude only looks into your Photos library when you ask it to — never on its own, and macOS
+have. Claude only looks into your Apple Photos library when you ask it to — never on its own, and macOS
 asks you for permission the first time. Claude can also pick the **best photos of a trip** (by Apple's own quality score, without
 near-duplicates, spread over all days) and turn them into a Snap to Album page for captioning and
 sharing — say *"make an album for captioning from the Lisbon trip"*.
