@@ -7,7 +7,14 @@ Photograph the pages with your phone → copy them into the `New photos` folder 
 
 You get a **private offline archive**: one file per album that opens in any web browser, without
 internet, and that you can copy to a USB stick or send to your family. Chapters on a timeline,
-photos gently restored, the handwriting from the pages, the back of a photo one click away.
+the handwriting from the pages, the back of a photo one click away.
+
+**You choose how your photos are restored — on one of your own photos, before anything is
+processed.** Claude shows the same photo in every version side by side, with a slider: just
+cropped and straightened · colors and contrast fixed · faces gently touched up · faces fully
+restored — plus two optional AI extras, colorizing black-and-white photos and enlarging them.
+Pick what looks right to you; nothing is "improved" behind your back, and the unretouched photo
+always stays one click away in the album.
 
 **Captions as easy as writing on the back of a photo.** Your grandmother knows who is who — and she
 does not need to learn anything: double-click, the album opens, there is a box under every photo,
