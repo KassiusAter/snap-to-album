@@ -5,7 +5,10 @@ all of this for you.
 
 ## Requirements
 
-- macOS (uses the built-in `sips` to read HEIC, JPG, PNG and TIFF); Apple Silicon recommended for GPU speed
+- macOS (uses the built-in `sips` to read HEIC, JPG, PNG and TIFF); Apple Silicon recommended for GPU speed.
+  Windows and Linux versions are in the works: the core (detection, restoration, AI models, album
+  building) is plain Python; what still needs porting is HEIC conversion, the double-click launchers,
+  the setup script and a few system calls in the captioning window.
 - Photos from any phone (iPhone, Android), camera or scanner
 - Python 3.10 or newer (tested with 3.14), ~2 GB free disk space
 - [Claude Code](https://claude.com/claude-code) (terminal or the Claude desktop app). Not usable on

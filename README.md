@@ -26,7 +26,7 @@ Claude does all the technical work. You only answer simple questions.
 
 > **You need a Mac and Claude Code** — either the Claude desktop app or Claude Code in the Terminal.
 > It does not work on claude.ai in the browser: your photos are processed on your own computer,
-> which a web page cannot do.
+> which a web page cannot do. **Windows and Linux versions are in the works.**
 
 ## How it works
 
