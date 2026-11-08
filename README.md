@@ -2,24 +2,24 @@
 
 **Your old family albums, saved and enhanced — no tech skills needed.**
 
-Photograph the pages with your phone → copy them into the `New photos` folder → double-click
+Photograph the pages with your phone → copy the photos into the `New photos` folder → double-click
 **RUN Snap to Album** → sit down with your grandparents and caption the photos together.
 
-You get a **private offline archive**: one file per album that opens in any web browser, without
-internet, and that you can copy to a USB stick or send to your family. Chapters on a timeline,
-the handwriting from the pages, the back of a photo one click away.
+You get a **private offline archive**: one file per album that opens in any web browser, even
+offline, and that you can copy to a USB stick or send to your family. Inside: chapters on a
+timeline, the handwriting from the pages, and the back of each photo just one click away.
 
 **You choose how your photos are restored — on one of your own photos, before anything is
-processed.** Claude shows the same photo in every version side by side, with a slider: just
+processed.** Claude shows the same photo in every version, with a slider to compare them: just
 cropped and straightened · colors and contrast fixed · faces gently touched up · faces fully
-restored — plus two optional AI extras, colorizing black-and-white photos and enlarging them.
+restored — plus two optional AI extras: colorizing black-and-white photos and enlarging them.
 Pick what looks right to you; nothing is "improved" behind your back, and the unretouched photo
 always stays one click away in the album.
 
 **Captions as easy as writing on the back of a photo.** Your grandmother knows who is who — and she
 does not need to learn anything: double-click, the album opens, there is a box under every photo,
 she types *"Aunt Mary at the lake, summer 1962"* and presses Enter. That is all. Each caption is
-saved twice at once: **in the album** and **inside the photo file itself** (its metadata), so the
+saved in two places at once: **in the album** and **inside the photo file itself** (its metadata), so the
 photo keeps its story even when it is copied to Apple Photos, another computer or a USB stick.
 
 Claude does all the technical work. You only answer simple questions.
@@ -33,12 +33,13 @@ Claude does all the technical work. You only answer simple questions.
 1. **Download** this project (green **Code** button → **Download ZIP**, then unzip) and put the
    folder wherever you like.
 2. **Photograph** your album pages — with any phone (iPhone, Android) or camera; a scanner works
-   too. Whole pages, straight from above, no flash, no glare. Tiny or precious photo? Add a close-up right after the page. Loose photo with writing on
-   the back? Photograph the front, then straight away the back.
+   too. Whole pages, straight from above, no flash, no glare. Tiny or precious photo? Add a
+   close-up right after the page. Loose photo with writing on the back? Photograph the front, then
+   the back straight away.
 3. **Copy** the photos into the **`New photos`** folder — AirDrop, a cable, a memory card or your
    cloud folder, whatever you normally use. iPhone HEIC, JPG, PNG and TIFF are all fine.
 4. **Double-click `RUN Snap to Album`.** Claude starts and creates your album.
-   *The very first time macOS may ask whether to open it: right-click → Open.*
+   *The very first time, macOS may block it — right-click it and choose Open.*
    Prefer the Claude desktop app? Open this folder there and type **create a photo album**.
 5. **First time only:** Claude sets everything up by itself (it asks before downloading about
    1.5 GB) and shows you one of your photos in several versions — *you* choose the look you like.
@@ -46,7 +47,7 @@ Claude does all the technical work. You only answer simple questions.
    in the **`Albums`** folder you will find **`… – add captions`**. Double-click it: the album opens
    with a box under every photo. Type what you know — who, where, when — and press Enter. No saving,
    no menus: every caption goes straight into the album and into the photo file's own data.
-   Afterwards Claude can sort the photos by your captions, keeping the time order.
+   Afterwards Claude can sort the photos by your captions, keeping them in chronological order.
 
 ## What you see in the folder
 
@@ -65,7 +66,7 @@ Snap to Album/
 
 - Your photos are processed **on your own computer** (its processor and graphics chip). Nothing is
   uploaded to any cloud, website or photo service, and nothing is published.
-- The internet is used only to download the tools once.
+- The internet is used only once, to download the tools.
 - **One honest note:** Claude is an online assistant. If you allow it, Claude looks at small previews
   of your photos to read handwriting and check its work — those previews are then sent to Anthropic
   as part of your conversation, like any picture you show Claude. You decide on the first run; if you
@@ -80,12 +81,12 @@ would take yourself (Claude can help if you ask); please read the next section f
 ## Fair use of your albums
 
 - **Photos have authors.** A photo belongs to whoever took it — often a family member, sometimes a
-  studio (weddings, school photos). Sharing in the family is fine; publishing openly is different.
+  studio (weddings, school photos). Sharing within the family is fine; publishing openly is different.
 - **Newspaper clippings, cartoons and postcards** in old albums belong to their publishers. They stay
   in your album because they are part of its story — but they are not yours to publish.
 - **People in the photos** have a right to privacy. Ask before putting recognizable people online,
   and keep anything you share behind a password.
-- **Restored is not original.** Touched-up faces, added colors or enlargement change a photo. The album
+- **Restored is not original.** Touching up faces, adding colors or enlarging changes a photo. The album
   always keeps the unretouched version one click away, and the paper album stays the real record.
 
 ## Need more?
