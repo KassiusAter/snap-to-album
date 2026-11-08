@@ -1,6 +1,6 @@
 # Snap to Album
 
-**Your old family albums, saved — no tech skills needed.**
+**Your old family albums, saved and enhanced — no tech skills needed.**
 
 Photograph the pages with your phone → copy them into the `New photos` folder → double-click
 **RUN Snap to Album** → sit down with your grandparents and caption the photos together.
