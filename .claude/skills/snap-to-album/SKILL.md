@@ -1,11 +1,12 @@
 ---
 name: snap-to-album
-description: Snap to Album — turns iPhone photos of old paper photo albums and loose prints into a private offline archive, with no tech skills needed. One self-contained HTML file per album (chapters, timeline, enhanced photos, back sides). Captioning is as simple as writing on the back of a photo: grandparents double-click a launcher, type who is who under each photo and press Enter — each caption is saved both in the album and inside the photo file's own metadata, so the photo keeps its story anywhere (Apple Photos, other computers). Plus an inventory of all photos. The user never touches the Terminal — Claude does every technical step. Use when the user says "create a photo album", "make a photo album", "digitize my photo album", "continue the photo album", "add captions", "snap to album", or the same in any other language.
+description: Snap to Album — turns phone photos (iPhone, Android), camera shots or scans of old paper photo albums and loose prints into a private offline archive, with no tech skills needed. One self-contained HTML file per album (chapters, timeline, enhanced photos, back sides). Captioning is as simple as writing on the back of a photo: grandparents double-click a launcher, type who is who under each photo and press Enter — each caption is saved both in the album and inside the photo file's own metadata, so the photo keeps its story anywhere (Apple Photos, other computers). Plus an inventory of all photos. The user never touches the Terminal — Claude does every technical step. Use when the user says "create a photo album", "make a photo album", "digitize my photo album", "continue the photo album", "add captions", "snap to album", or the same in any other language.
 ---
 
 # Snap to Album
 
-The user photographs album pages with an iPhone, drops the photos into `New photos/`, double-clicks
+The user photographs album pages with a phone or camera (or scans them), drops the photos into
+`New photos/`, double-clicks
 `RUN Snap to Album`, and you turn them into a finished album. Then the family — typically sitting
 together with the grandparents, who know who is who — adds captions by double-clicking a launcher.
 Every caption lands in two places at once: the album file and the photo's own metadata.
@@ -55,7 +56,7 @@ All commands below run from the project folder: `system/.venv/bin/python system/
 2. `PY convert <album>` → JPG copies and previews; it prints the snapshots in shooting order with the
    seconds between them. Check the order makes sense; if not, adapt the settings to how the user
    worked (ask in plain words if unclear):
-   - iPhone, back of a photo shot right after its front → defaults
+   - phone or camera, back of a photo shot right after its front → defaults
    - times missing or all the same (copied/edited files) → `PY config time_source file` or `name`
    - scanner with numbered files → `time_source name`, `back_max_gap 0`
    - backs photographed later or in a batch → `back_max_gap 0`, pair them with the user

@@ -5,7 +5,8 @@ all of this for you.
 
 ## Requirements
 
-- macOS (uses the built-in `sips` to read iPhone HEIC photos); Apple Silicon recommended for GPU speed
+- macOS (uses the built-in `sips` to read HEIC, JPG, PNG and TIFF); Apple Silicon recommended for GPU speed
+- Photos from any phone (iPhone, Android), camera or scanner
 - Python 3.10 or newer (tested with 3.14), ~2 GB free disk space
 - [Claude Code](https://claude.com/claude-code) (terminal or the Claude desktop app). Not usable on
   claude.ai in the browser or as an uploaded claude.ai skill: it needs local Python, the GPU, the
@@ -88,7 +89,7 @@ Chosen on the first run, changeable any time (`config.py enhancement …`, then 
 | `colorize bw` | Black-and-white photos get colors (ECCV16 model, Zhang, Isola & Efros) | Colors are guessed: skin, sky and grass are usually plausible, clothes and objects are not known |
 | `upscale 2x` / `4x` | Upscaling with Real-ESRGAN (general x4 v3) | Sharpens, but invents fine texture (skin, hair, paper grain) that was never in the photo |
 
-A note from real use: on old family prints, an iPhone photo usually has enough resolution and the
+A note from real use: on old family prints, a phone photo usually has enough resolution and the
 upscaler's invented texture can look like fine cracks; colorization guesses colors. That is why both
 are opt-in. Some people love them — try them on your test photo.
 
@@ -98,7 +99,7 @@ Clippings and back sides always get only a gentle treatment (no AI extras).
 
 | Setting | Values | Use it when |
 |---|---|---|
-| `time_source` | `auto` (default) · `exif` · `file` · `name` | How the order and time of snapshots is determined: `exif` = time stored by the iPhone/camera; `file` = file date (scanners, edited/exported files); `name` = file-name order only (`scan_001…`); `auto` = EXIF, otherwise file date |
+| `time_source` | `auto` (default) · `exif` · `file` · `name` | How the order and time of snapshots is determined: `exif` = time stored by the phone/camera; `file` = file date (scanners, edited/exported files); `name` = file-name order only (`scan_001…`); `auto` = EXIF, otherwise file date |
 | `back_max_gap` | seconds, default `60`; `0` = ignore time | Max. time between a photo and its back side. `0` if you scanned or shot the backs later — then only the order counts |
 | `metadata_date` | `year` (default) · `capture` · `none` | Date written into `Photos with captions`: the year the photo shows (from captions/chapters — Apple Photos then sorts by family history), when you took the snapshot, or none |
 | `view_photos` | `yes` · `no` | Whether Claude may look at photo previews (see Privacy) |

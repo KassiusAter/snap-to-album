@@ -2,7 +2,7 @@
 
 **Your old family albums, saved — no tech skills needed.**
 
-Photograph the pages with your iPhone → drop the photos into a folder → double-click
+Photograph the pages with your phone → drop the photos into a folder → double-click
 **RUN Snap to Album** → sit down with your grandparents and caption the photos together.
 
 You get a **private offline archive**: one file per album that opens in any web browser, without
@@ -25,10 +25,11 @@ Claude does all the technical work. You only answer simple questions.
 
 1. **Download** this project (green **Code** button → **Download ZIP**, then unzip) and put the
    folder wherever you like.
-2. **Photograph** your album pages with your iPhone — whole pages, straight from above, no flash,
-   no glare. Tiny or precious photo? Add a close-up right after the page. Loose photo with writing on
+2. **Photograph** your album pages — with any phone (iPhone, Android) or camera; a scanner works
+   too. Whole pages, straight from above, no flash, no glare. Tiny or precious photo? Add a close-up right after the page. Loose photo with writing on
    the back? Photograph the front, then straight away the back.
-3. **Drop** the photos into the **`New photos`** folder (AirDrop, or export from Photos).
+3. **Drop** the photos into the **`New photos`** folder — AirDrop, a cable, a memory card or your
+   cloud folder, whatever you normally use. iPhone HEIC, JPG, PNG and TIFF are all fine.
 4. **Double-click `RUN Snap to Album`.** Claude starts and creates your album.
    *The very first time macOS may ask whether to open it: right-click → Open.*
    Prefer the Claude desktop app? Open this folder there and type **create a photo album**.
@@ -45,7 +46,7 @@ Claude does all the technical work. You only answer simple questions.
 ```
 Snap to Album/
   RUN Snap to Album.command  ← double-click to start
-  New photos/                ← put your iPhone photos here
+  New photos/                ← put your photos here
   Albums/                    ← your finished albums
      1950–1959 Grandma.html                     the album — open it in any browser
      1950–1959 Grandma – add captions.command   double-click to type captions

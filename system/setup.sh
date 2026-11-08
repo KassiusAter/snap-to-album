@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "$0")"
 
 if [[ "$(uname)" != "Darwin" ]]; then
-  echo "This project currently targets macOS (it uses the built-in 'sips' tool to read iPhone HEIC photos)."
+  echo "This project currently targets macOS (it uses the built-in 'sips' tool to read HEIC/JPG/PNG/TIFF photos)."
   exit 1
 fi
 

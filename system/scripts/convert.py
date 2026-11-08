@@ -2,7 +2,7 @@
 
   system/.venv/bin/python system/scripts/convert.py <album> [IMG_0001 IMG_0002 …]
 
-Without names, takes every photo in New photos/. Uses macOS 'sips' (reads iPhone HEIC).
+Without names, takes every photo in New photos/. Uses macOS 'sips' (reads HEIC, JPG, PNG, TIFF from any phone, camera or scanner).
 Originals stay untouched in New photos/ until the album is finished (move_used.py).
 Every snapshot gets a unique id (normally its file name; IMG_0012-2 if another photo already
 used that name) recorded in system/work/snapshots.json.

@@ -2,7 +2,7 @@
 
 What the user sees (project folder):
   RUN Snap to Album.command   double-click: starts Claude with "create a photo album"
-  New photos/             drop new iPhone photos here (HEIC/JPG/PNG)
+  New photos/             drop new photos here (HEIC/JPG/PNG/TIFF — any phone, camera or scanner)
   Albums/                 finished albums (one offline HTML file each), their
                           "<album> – add captions.command" launchers and
                           "Photos with captions/" (JPGs with captions in their metadata)
@@ -69,7 +69,7 @@ SETTINGS = {
     "view_photos": (["yes", "no"], None,
                     "may Claude open photo previews (they are then sent to the model provider)"),
     "time_source": (["auto", "exif", "file", "name"], "auto",
-                    "how to tell when each snapshot was taken: exif = camera/iPhone time, "
+                    "how to tell when each snapshot was taken: exif = phone/camera time, "
                     "file = file date (scanners, edited files), name = file-name order only, "
                     "auto = exif, else file date, else name"),
     "back_max_gap": (None, 60,
@@ -359,7 +359,7 @@ def _file_time(snapshot):
 @lru_cache(maxsize=None)
 def capture_time(snapshot):
     """When the snapshot was taken, according to the "time_source" setting:
-    exif (camera/iPhone time), file (file date — scanners, files without EXIF),
+    exif (phone/camera time), file (file date — scanners, files without EXIF),
     name (no time, file-name order only), auto (exif → file date). None if unknown."""
     source = load_config()["time_source"]
     if source == "name":
