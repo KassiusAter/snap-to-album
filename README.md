@@ -30,6 +30,8 @@ does not need to learn anything: double-click, the album opens, there is a box u
 she types *"Aunt Mary at the lake, summer 1962"* and presses Enter. That is all. Each caption is
 saved in two places at once: **in the album** and **inside the photo file itself** (its metadata), so the
 photo keeps its story even when it is copied to Apple Photos, another computer or a USB stick.
+**Albums made from the Apple Photos app go one step further:** each caption is written straight onto
+the original photo in Photos — on all your devices through iCloud, searchable, no copies.
 
 Claude does all the technical work. You only answer simple questions.
 
