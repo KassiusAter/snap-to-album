@@ -80,6 +80,8 @@ class Album:
           marked after enhance.py ran)
         - other photos: processed again when the processed file is missing or older than the crop
           (e.g. after a corrected crop) — with the look chosen in the settings."""
+        if self.a.get("source") == "photos":
+            return   # digital photos from the Photos app are used as they are (best_source → crops/)
         import enhance
         gentle = enhance.gentle_ids(self.a, self.d)
         pipe = enhance.Pipeline(common.load_config())
@@ -216,8 +218,9 @@ class Album:
 
 def build(name, html_only=False):
     """Builds the whole album (also called by the captioning window when the album changed)."""
-    common.require_config()
     alb = Album(name)
+    if alb.a.get("source") != "photos":   # albums from the Photos app need no enhancement choice
+        common.require_config()
     photos, pages = common.album_photos(alb.a, alb.d)
     ids = [j for j, _, _ in photos]
     alb.check_sources(ids, pages)

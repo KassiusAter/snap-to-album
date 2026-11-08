@@ -74,6 +74,9 @@ def chapters_of(album, d):
 
 def export_album(name):
     album, d = common.load_album(name), common.album_dir(name)
+    if album.get("source") == "photos":
+        print("Metadata: photos come from the Photos app — no extra copies made")
+        return
     caps = common.load_captions()
     chapters = chapters_of(album, d)
     done = [export_photo(album, d, j, ch, caps) for j, ch in chapters.items()]
@@ -90,6 +93,8 @@ def export_album(name):
 def update(name, j):
     """After a caption change in the captioning window: rewrite one photo only."""
     album, d = common.load_album(name), common.album_dir(name)
+    if album.get("source") == "photos":
+        return None
     ch = chapters_of(album, d).get(j)
     if ch is not None:
         return export_photo(album, d, j, ch)

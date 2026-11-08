@@ -68,6 +68,8 @@ All scripts: `system/.venv/bin/python system/scripts/<name>.py`, run from the pr
 | `caption_server.py <album>` | The captioning window (local web server on 127.0.0.1) | Every Enter saves straight into `captions.json`, the album file, the photo metadata and the inventory |
 | `metadata.py <album>` | Writes caption, album name and date into JPG metadata (`Albums/Photos with captions/`) | Captions survive outside the album (Apple Photos, Finder) |
 | `inventory.py` | Rebuilds the SQLite inventory and prints a summary | One place for captions, years, back sides, what is still uncaptioned |
+| `photos_trips.py list` / `create <n> "<name>"` | **Experimental:** finds trips in the Apple Photos library (read-only database access, time gaps + GPS, home detection, Apple aesthetic score, coverage by existing albums) and creates albums in Photos via AppleScript, incl. airport photos ±30 h | Turns a huge digital library into albums in minutes; skips other people's shared-album photos (Photos forbids adding them) and hidden burst frames |
+| `photos_album.py <n> "<title>" [--count 50]` | **Experimental:** best photos of a Photos trip (Apple aesthetic score + favorites, near-duplicates within 90 s removed, quota per day) → temporary export via Photos (downloads from iCloud) → 2400 px working copies → HTML album with one chapter per day, no restoration, captioning launcher | The digital counterpart of the paper-album workflow; raw exports are deleted, the Photos library is never changed |
 | `move_used.py <album>` | Moves the album's originals to `system/used photos/` | `New photos/` only ever holds what is waiting |
 
 The album content is described by `system/work/<album>/album.json` — see
@@ -142,6 +144,12 @@ otherwise the only year in the album title.
 - Network use is limited to **downloading software and weights**: `setup.sh` (PyPI, the official
   GFPGAN/facexlib GitHub releases, Homebrew) and, on first use of the AI extras, the Real-ESRGAN
   GitHub release and the colorization authors' official download.
+- **Apple Photos:** a read-only snapshot of the Photos database is used (cloned instantly into a
+  temporary folder and deleted afterwards — the live library is never locked or changed). Days and
+  times are the local time where each photo was taken. The database layout is not documented by
+  Apple and may change with macOS updates; the scripts find the album table by its columns and
+  report clearly when something cannot be read. Only a summary (dates,
+  Apple's place names, numbers of photos) is shown — and sent to Anthropic when Claude runs it.
 - **Claude itself runs in the cloud.** When Claude opens a photo preview (to read handwriting, check a
   crop, propose chapters), that image is sent to Anthropic as part of the conversation. With
   `view_photos no`, Claude never opens images.

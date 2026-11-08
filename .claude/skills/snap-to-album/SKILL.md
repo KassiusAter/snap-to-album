@@ -1,9 +1,14 @@
 ---
 name: snap-to-album
-description: Snap to Album — turns phone photos (iPhone, Android), camera shots or scans of old paper photo albums and loose prints into a private offline archive, with no tech skills needed. One self-contained HTML file per album (chapters, timeline, restored photos, back sides). The user picks the restoration on one of their own photos first, comparing every option side by side (crop only, color fix, gentle or full face restoration, optional AI colorization and upscaling) — nothing is enhanced without their choice. Captioning is as simple as writing on the back of a photo: grandparents double-click a launcher, type who is who under each photo and press Enter — each caption is saved both in the album and inside the photo file's own metadata, so the photo keeps its story anywhere (Apple Photos, other computers). Plus an inventory of all photos. The user never touches the Terminal — Claude does every technical step. Use when the user says "create a photo album", "make a photo album", "digitize my photo album", "continue the photo album", "add captions", "snap to album", or the same in any other language.
+description: Snap to Album — turns phone photos (iPhone, Android), camera shots or scans of old paper photo albums and loose prints into a private offline archive, with no tech skills needed. It also works with the Apple Photos app on the Mac: it finds trips by time and place, picks the best shots by Photos' own aesthetic (quality) score and turns them into offline HTML albums for captioning and private sharing — or creates albums for them right in Photos. One self-contained HTML file per album (chapters, timeline, restored photos, back sides). The user picks the restoration on one of their own photos first, comparing every option side by side (crop only, color fix, gentle or full face restoration, optional AI colorization and upscaling) — nothing is enhanced without their choice. Captioning is as simple as writing on the back of a photo: grandparents double-click a launcher, type who is who under each photo and press Enter — each caption is saved both in the album and inside the photo file's own metadata, so the photo keeps its story anywhere (Apple Photos, other computers). Plus an inventory of all photos. The user never touches the Terminal — Claude does every technical step. Use when the user says "create a photo album", "make a photo album", "digitize my photo album", "continue the photo album", "add captions", "snap to album", "find trips in my Photos", "make an album from my Photos", "make albums from my Photos", or the same in any other language.
 ---
 
 # Snap to Album
+
+Two sources, one result — a private offline HTML album with a captioning window:
+- **Paper albums:** photographs of album pages and loose prints (sections 0–5).
+- **Apple Photos app:** digital photos already on the Mac — trips found by time and GPS, the best
+  shots picked by Photos' own aesthetic score, or albums created right in Photos (section 6).
 
 The user photographs album pages with a phone or camera (or scans them), drops the photos into
 `New photos/`, double-clicks
@@ -117,6 +122,37 @@ rebuild both albums and re-create the captioning launchers.
 `PY move_used <album>` moves the originals from `New photos/` to `system/used photos/`, so
 `New photos/` only holds what is still waiting. Tell the user where their album and the captioning
 launcher are, in one or two sentences.
+
+## 6. Bonus (experimental): albums from the Apple Photos library
+
+For digital photos already in the Photos app (macOS). Nothing is copied, moved or deleted — an
+album in Photos only refers to photos that are already there.
+
+1. `PY photos_trips list` reads the Photos database **read-only**, finds trips (time gaps + GPS,
+   joined over consecutive days away from home), scores them and shows which are **not yet in any
+   album**, numbered. Present the best ones in plain words, e.g. "Lisbon, 12–15 May 2019, 420
+   photos — no album yet". It also shows trips that are only partly in an album.
+2. The user picks trips and names. Suggest names in the style of their existing albums
+   (typically "Place year"; look at existing album names in the list output if unsure).
+3. `PY photos_trips create <number> "<name>"` creates the album in Photos with all photos of the
+   trip, plus photos taken at airports up to 30 h before/after (departure and arrival). Use
+   `--dry-run` first if unsure. It refuses if an album with that name already exists.
+4. Report the result in one line per album. Mention the two automatic skips when they occur:
+   - photos from **other people's shared albums** — Photos does not allow adding them to the
+     user's own albums; they can save them to their library first ("Add to Library") and you add
+     them afterwards
+   - **hidden burst frames** — nothing is missing, the burst's key photo is in the album
+Privacy: only the summary (dates, Apple's place names, counts) reaches the conversation, no photos.
+macOS may ask once for permission to control Photos, or for Full Disk Access to read the library.
+
+5. **HTML album for captioning and sharing (experimental):** `PY photos_album <number> "<title>"
+   [--count 50]` picks the best photos of the trip (Apple's aesthetic score + favorites, no
+   near-duplicates within 90 s, spread over all days, own photos only), lets Photos export them
+   (downloads from iCloud if needed — can take a few minutes; tell the user), keeps 2400 px working
+   copies, deletes the raw exports and builds a normal Snap to Album: one chapter per day titled with
+   Apple's place names, no cropping or restoration, plus the captioning launcher. Suggest 30–60
+   photos for a weekend, more for longer trips. Ask the user to look at the result.
+   *Not yet:* captions typed for these albums are not written back into the Photos app.
 
 ## Rules
 
