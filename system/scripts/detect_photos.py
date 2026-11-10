@@ -150,6 +150,9 @@ ROTATE = {90: cv2.ROTATE_90_CLOCKWISE, 180: cv2.ROTATE_180, 270: cv2.ROTATE_90_C
 
 def process(d, snapshot, manual, rotate=None):
     img = cv2.imread(os.path.join(d, "jpg", f"{snapshot}.jpg"))
+    if img is None:
+        print(f"{snapshot}: cannot be read as an image — skipped")
+        return
     h, w = img.shape[:2]
     m = manual.get(snapshot)
     if m == "whole":
@@ -161,8 +164,8 @@ def process(d, snapshot, manual, rotate=None):
         corners, mode = detect(img, m)
     # remove this snapshot's old crops and their processed versions (they no longer match);
     # the build processes the new crops again
-    for sub in ("crops", "enhanced", "final"):
-        for old in common.crops_of(os.path.join(d, sub), snapshot):
+    for sub, ext in (("crops", "jpg"), ("enhanced", "jpg"), ("enhanced", "cfg"), ("final", "jpg")):
+        for old in common.crops_of(os.path.join(d, sub), snapshot, ext):
             os.remove(old)
     k = 1400 / max(h, w)
     view = cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA)

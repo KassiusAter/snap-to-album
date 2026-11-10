@@ -74,12 +74,21 @@ def save_caption(j, text):
     atomic_write(common.CAPTIONS, json.dumps(dict(sorted(data.items())), ensure_ascii=False, indent=1))
 
 
+_ALBUM_CACHE = {}   # album name → (album.json mtime, album, set of photo ids)
+
+
 def albums_with(j):
-    """Every album that shows photo j (a photo can be listed in more than one album)."""
+    """Every album that shows photo j (a photo can be listed in more than one album).
+    album.json files are re-read only when they changed — this runs on every Enter."""
     found = []
     for name in common.album_names():
-        a = common.load_album(name)
-        if j in {p for p, _, _ in common.album_photos(a, common.album_dir(name))[0]}:
+        path = os.path.join(common.album_dir(name), "album.json")
+        mtime = os.path.getmtime(path)
+        if name not in _ALBUM_CACHE or _ALBUM_CACHE[name][0] != mtime:
+            a = common.load_album(name)
+            _ALBUM_CACHE[name] = (mtime, a, {p for p, _, _ in common.album_photos(a, common.album_dir(name))[0]})
+        _, a, ids = _ALBUM_CACHE[name]
+        if j in ids:
             found.append((name, a))
     return found or [(ALB.name, ALB.a)]
 
@@ -123,24 +132,25 @@ def flush():
         PENDING.clear()
     if not items:
         return
+    by_album = {}
+    for j, text in items.items():
+        for name, a in albums_with(j):
+            by_album.setdefault(name, (a, {}))[1][j] = text
     with saving_lock():
-        by_album = {}
-        for j, text in items.items():
-            for name, a in albums_with(j):
-                by_album.setdefault(name, (a, {}))[1][j] = text
         for name, (a, caps) in by_album.items():
             write_into_albums(caps, [(name, a)], kinds=("album",))
-            if a.get("source") == "photos":
-                # albums made from the Photos app: the caption also goes onto the original photo there
-                import photos_captions
-                sent = photos_captions.write(photos_captions.for_album(name, caps))
-                print(f"  {sent} caption(s) written into the Photos app")
             for j, text in caps.items():
                 try:
                     metadata.update(name, j)
                     inventory.update_caption(name, j, text)
                 except Exception as e:  # noqa: BLE001 — caption is saved; catches up on the next build
                     print(f"  metadata/inventory not updated for {j}: {e}")
+    # the Photos app is slow to answer — talk to it OUTSIDE the lock, so the next Enter never waits for it
+    for name, (a, caps) in by_album.items():
+        if a.get("source") == "photos":
+            import photos_captions
+            sent = photos_captions.write(photos_captions.for_album(name, caps))
+            print(f"  {sent} caption(s) written into the Photos app")
 
 
 def schedule_flush(delay=2.0):
@@ -257,6 +267,14 @@ if __name__ == "__main__":
     if server is None:
         sys.exit("No free port found — please close other captioning windows and try again.")
     url = f"http://127.0.0.1:{PORT}/"
+    # self-check: captions are written into the finished album by pattern matching on the
+    # template's markup — if the template was changed, say so instead of failing silently
+    album_file = os.path.join(common.ALBUMS, ALB.a["output_file"])
+    if os.path.exists(album_file):
+        hits = {html.unescape(m.group(2)) for m in FIGURE.finditer(open(album_file, encoding="utf-8").read())}
+        if not PHOTO_IDS <= hits:
+            print(f"WARNING: {len(PHOTO_IDS - hits)} photo(s) not found in the album file — captions will be "
+                  "saved but not shown in it until the album is rebuilt (was templates/album.html changed?).")
     write_into_albums(common.load_captions())  # catch up captions saved earlier
     for sig in (signal.SIGHUP, signal.SIGTERM):
         signal.signal(sig, flush_and_exit)

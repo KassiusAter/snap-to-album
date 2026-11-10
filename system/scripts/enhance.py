@@ -188,6 +188,8 @@ def process_photo(album_d, j, pipe, gentle):
         cv2.imwrite(final_path, final, [cv2.IMWRITE_JPEG_QUALITY, 95])
     elif os.path.exists(final_path):
         os.remove(final_path)  # left over from an earlier run with more steps
+    with open(os.path.join(x, "enhanced", f"{j}.cfg"), "w") as f:   # what it was made with
+        f.write(common.enhancement_signature(pipe.cfg, gentle))
     return note
 
 

@@ -25,7 +25,9 @@ for sub in ("jpg", "previews"):
 
 files = sorted(p for p in glob.glob(os.path.join(common.NEW, "*")) if p.lower().endswith(common.IMAGE_EXT))
 if names:
-    files = [p for p in files if os.path.splitext(os.path.basename(p))[0] in names]
+    known = common.load_snapshots()
+    wanted = set(names) | {known[n]["file"] for n in names if n in known}   # ids (IMG_0012-2) or file names
+    files = [p for p in files if os.path.splitext(os.path.basename(p))[0] in wanted or os.path.basename(p) in wanted]
 if not files:
     sys.exit("No photos found in New photos/.")
 

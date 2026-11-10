@@ -25,6 +25,7 @@ all of this for you.
 | `Albums/` | Finished albums (`*.html`), captioning launchers (`* – add captions.command`), `Photos with captions/` | no |
 | `.claude/skills/snap-to-album/` | The Claude Code skill: `SKILL.md` (workflow) and `album-format.md` | yes |
 | `system/scripts/`, `system/templates/` | The code | yes |
+| `system/tests/run_tests.py` | Self-test: synthetic album page, loose print and back side run through the whole workflow in a temporary folder (no personal photos needed) | yes |
 | `system/setup.sh`, `system/requirements.txt` | Installation | yes |
 | `system/.venv/`, `system/models/` | Python environment and model weights (created by setup) | no |
 | `system/config.json` | Your settings | no |
@@ -48,6 +49,18 @@ It creates `system/.venv/` (NumPy, OpenCV, Pillow, PyTorch, GFPGAN, BasicSR, fac
 face-restoration weights (~350 MB) into `system/models/` and installs ExifTool via Homebrew if
 available. GFPGAN, BasicSR and facexlib are installed from their official source packages with a
 small, visible compatibility fix for Python 3.13+ (details in `THIRD_PARTY_NOTICES.md`).
+
+## Self-test
+
+```bash
+system/.venv/bin/python system/tests/run_tests.py
+```
+
+Builds three synthetic snapshots (an album page with three prints, a loose print, the back of a
+print), copies the scripts into a temporary folder and runs convert → detect → backs → enhance →
+build → captioning window (over HTTP) → move_used → inventory there, plus unit tests of the pure
+helpers. Takes about 10 s and touches nothing outside the temporary folder. Run it after any change
+to the scripts — and before porting to another operating system.
 
 ## Workflow and scripts
 
@@ -124,6 +137,11 @@ Clippings and back sides always get only a gentle treatment (no AI extras).
   restores the gentle version if a full AI-processed one exists.
 - **Captions are saved one at a time** (file lock), so quick successive Enters — or two captioning
   windows open at once — never overwrite each other. Each album uses its own port.
+- **A changed look is applied automatically.** Every processed photo carries a note of the settings
+  it was made with (`enhanced/<id>.cfg`); after you change the enhancement, colorize or upscale
+  setting, the next build processes the affected photos again — no separate step to remember.
+- **Pinned dependencies.** `requirements.txt` pins major versions, so a new major release of
+  NumPy, OpenCV or PyTorch cannot break a fresh installation.
 - **Deleting a caption** in the window stores an empty caption, which overrides one Claude wrote.
 - **Moving photos between albums** only changes `album.json`; the build finds each photo in
   whichever album folder holds it and stops with a clear message if an id does not exist.

@@ -82,6 +82,8 @@ def build():
             if not p.lower().endswith(common.IMAGE_EXT) or p in files_seen:
                 continue
             s = os.path.splitext(os.path.basename(p))[0]
+            if s in registered:
+                s = f"{s} ({os.path.basename(folder)})"   # same name as a registered snapshot — keep both visible
             db.execute("INSERT OR IGNORE INTO snapshots VALUES (?,?,?,?)",
                        (s, os.path.relpath(p, common.ROOT), None, None))
     db.commit()

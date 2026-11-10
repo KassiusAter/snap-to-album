@@ -83,18 +83,22 @@ class Album:
         if self.a.get("source") == "photos":
             return   # digital photos from the Photos app are used as they are (best_source → crops/)
         import enhance
+        cfg = common.load_config()
         gentle = enhance.gentle_ids(self.a, self.d)
-        pipe = enhance.Pipeline(common.load_config())
+        pipe = enhance.Pipeline(cfg)
         for j in list(ids) + list(self.backs):
             x = common.photo_dir(self.d, j)
             crop_p = os.path.join(x, "crops", f"{j}.jpg")
             fin_p, enh_p = os.path.join(x, "final", f"{j}.jpg"), os.path.join(x, "enhanced", f"{j}.jpg")
             done = fin_p if os.path.exists(fin_p) else enh_p
             stale = not os.path.exists(done) or os.path.getmtime(done) < os.path.getmtime(crop_p)
-            if j in gentle or stale:
+            # processed with other settings than the current ones (the look was changed since)?
+            sig_p = os.path.join(x, "enhanced", f"{j}.cfg")
+            wanted = common.enhancement_signature(cfg, j in gentle)
+            changed = not os.path.exists(sig_p) or open(sig_p).read().strip() != wanted
+            if stale or changed:
                 note = enhance.process_photo(self.d, j, pipe, j in gentle)
-                if stale:
-                    print(f"{j}: processed ({note})")
+                print(f"{j}: processed ({note})" + ("" if stale else " — settings changed"))
 
     def page_path(self, p):
         return os.path.join(common.snapshot_dir(self.d, p), "jpg", f"{p}.jpg")

@@ -153,13 +153,13 @@ def snapshot_dir(d, snapshot):
     return None
 
 
-def crops_of(folder, snapshot):
-    """Crop files of exactly this snapshot (<snapshot>_<number>.jpg) — not of a snapshot whose
+def crops_of(folder, snapshot, ext="jpg"):
+    """Crop files of exactly this snapshot (<snapshot>_<number>.<ext>) — not of a snapshot whose
     name merely starts the same ('page' must not pick up 'page_2_1.jpg')."""
     import re
-    rx = re.compile(re.escape(snapshot) + r"_(\d+)\.jpg$")
+    rx = re.compile(re.escape(snapshot) + r"_(\d+)\." + re.escape(ext) + "$")
     found = []
-    for p in glob.glob(os.path.join(folder, glob.escape(snapshot) + "_*.jpg")):
+    for p in glob.glob(os.path.join(folder, glob.escape(snapshot) + "_*." + ext)):
         m = rx.match(os.path.basename(p))
         if m:
             found.append((int(m.group(1)), p))
@@ -324,12 +324,19 @@ def find_original(snapshot):
     return None
 
 
-@lru_cache(maxsize=1)
-def _exif_times():
+def _originals_stamp():
+    """Which originals exist and when they changed — the time caches below are keyed by it, so a
+    long-running captioning window notices moved or added files instead of serving stale times."""
+    return tuple(sorted((p, os.path.getmtime(p)) for folder in (NEW, USED)
+                        for p in glob.glob(os.path.join(folder, "*")) if p.lower().endswith(IMAGE_EXT)))
+
+
+@lru_cache(maxsize=2)
+def _exif_times(stamp):
     """Capture times of all originals from EXIF, read with ONE exiftool call.
     (File dates are useless: copying a photo gives it a new date.)"""
     import shutil
-    files = [p for folder in (NEW, USED) for p in glob.glob(os.path.join(folder, "*")) if p.lower().endswith(IMAGE_EXT)]
+    files = [p for p, _ in stamp]
     tool = shutil.which("exiftool") or "/opt/homebrew/bin/exiftool"
     if not files or not os.path.exists(tool):
         return {}
@@ -356,17 +363,20 @@ def _file_time(snapshot):
     return datetime.fromtimestamp(getattr(st, "st_birthtime", st.st_mtime)).astimezone()
 
 
-@lru_cache(maxsize=None)
 def capture_time(snapshot):
     """When the snapshot was taken, according to the "time_source" setting:
     exif (phone/camera time), file (file date — scanners, files without EXIF),
     name (no time, file-name order only), auto (exif → file date). None if unknown."""
-    source = load_config()["time_source"]
+    return _capture_time(snapshot, load_config()["time_source"], _originals_stamp())
+
+
+@lru_cache(maxsize=4096)
+def _capture_time(snapshot, source, stamp):
     if source == "name":
         return None
     if source in ("exif", "auto"):
         orig = find_original(snapshot)
-        t = _exif_times().get(os.path.abspath(orig)) if orig else None
+        t = _exif_times(stamp).get(os.path.abspath(orig)) if orig else None
         if t or source == "exif":
             return t
     return _file_time(snapshot)
@@ -376,6 +386,16 @@ def shooting_order(snapshots):
     """Snapshots in the order they were taken (time per "time_source"; file name breaks ties
     and orders snapshots without a time)."""
     return sorted(snapshots, key=lambda s: (capture_time(s).timestamp() if capture_time(s) else float("inf"), s))
+
+
+# ---------- enhancement signature ----------
+
+def enhancement_signature(cfg, gentle=False):
+    """What a processed photo was made with. Stored next to it (enhanced/<id>.cfg) so the build
+    can tell when the settings changed and the photo must be processed again."""
+    if gentle:
+        return f"gentle|{cfg['enhancement']}"
+    return f"{cfg['enhancement']}|colorize={cfg.get('colorize', 'off')}|upscale={cfg.get('upscale', 'off')}"
 
 
 # ---------- compute device ----------

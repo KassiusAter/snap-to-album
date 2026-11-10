@@ -34,15 +34,16 @@ def read(uuids):
 		try
 			set d to description of media item id (contents of i)
 			if d is missing value then set d to ""
-			set out to out & (contents of i) & tab & d & linefeed
+			set out to out & (contents of i) & tab & d & (character id 30)
 		end try
 	end repeat
 	return out
 end tell'''
     res = subprocess.run(["osascript", "-"], input=script, capture_output=True, text=True, timeout=600)
     found = {}
-    for line in res.stdout.splitlines():
-        key, _, text = line.partition("\t")
+    for rec in res.stdout.split("\x1e"):   # records are separated by ASCII 30, so captions may contain line breaks
+        key, _, text = rec.partition("\t")
+        key = key.strip()
         if key:
             found[key.split("/")[0]] = text
     return found

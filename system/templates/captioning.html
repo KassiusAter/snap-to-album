@@ -36,6 +36,8 @@ body.only-empty .photo.captioned{display:none}
       f.classList.toggle('captioned',!!text);
       state.textContent=text?'✓ saved':'caption removed';
       count();
+      // next photo — skipping photos hidden by the "only without a caption" filter
+      while(next&&fields[next]&&fields[next].offsetParent===null)next++;
       if(next&&fields[next]){fields[next].focus();fields[next].scrollIntoView({block:'center',behavior:'smooth'})}
     })
     .catch(function(){inp.classList.add('error');state.textContent='Not saved — is the captioning window still open? Press Enter again.'});
@@ -47,7 +49,8 @@ body.only-empty .photo.captioned{display:none}
     state.className='cap-state';
     if(inp.value)f.classList.add('captioned');
     inp.addEventListener('click',function(e){e.stopPropagation()});
-    inp.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();save(f,inp,state,n+1)}});
+    // Enter saves — except while composing a character (Japanese, Chinese … input methods)
+    inp.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'&&!e.isComposing){e.preventDefault();save(f,inp,state,n+1)}});
     f.appendChild(inp);f.appendChild(state);fields.push(inp);
   });
   document.getElementById('cap-filter').addEventListener('change',function(e){document.body.classList.toggle('only-empty',e.target.checked)});

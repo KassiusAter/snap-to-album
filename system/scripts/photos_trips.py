@@ -55,12 +55,22 @@ PERMISSION_HINT = ("Allow Full Disk Access for the Terminal (or the Claude app) 
 
 
 def library_path():
-    """The System Photo Library: the one macOS Photos uses, else 'Photos Library', else the only one."""
-    out = subprocess.run(["defaults", "read", "com.apple.Photos", "IPXDefaultLibraryURLBookmark"],
-                         capture_output=True, text=True).stdout
+    """The System Photo Library: the one the Photos app uses (its bookmark in the Photos
+    preferences holds the library name), else 'Photos Library', else the only one."""
+    import plistlib
+    bookmark = b""
+    for pref in ("~/Library/Containers/com.apple.Photos/Data/Library/Preferences/com.apple.Photos.plist",
+                 "~/Library/Preferences/com.apple.Photos.plist"):
+        try:
+            with open(os.path.expanduser(pref), "rb") as f:
+                bookmark = plistlib.load(f).get("IPXDefaultLibraryURLBookmark") or b""
+            if bookmark:
+                break
+        except (OSError, ValueError):
+            continue
     libs = sorted(glob.glob(os.path.expanduser("~/Pictures/*.photoslibrary")))
     for lib in libs:
-        if os.path.basename(lib) in out:
+        if os.path.basename(lib).encode("utf-8") in bookmark:
             return lib
     default = os.path.expanduser("~/Pictures/Photos Library.photoslibrary")
     if os.path.isdir(default):

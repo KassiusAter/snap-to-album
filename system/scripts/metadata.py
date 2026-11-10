@@ -29,11 +29,9 @@ def folder(album):
     return os.path.join(common.CAPTIONED, album["folder"])
 
 
-def write(path, text, keyword, year, taken=None):
-    if not os.path.exists(EXIFTOOL):
-        return
-    args = [EXIFTOOL, "-q", "-overwrite_original", "-charset", "iptc=UTF8", "-IPTC:CodedCharacterSet=UTF8",
-            f"-EXIF:ImageDescription={text}", f"-IPTC:Caption-Abstract={text}", f"-XMP-dc:Description={text}",
+def tag_args(text, keyword, year, taken=None):
+    """exiftool arguments for one photo."""
+    args = [f"-EXIF:ImageDescription={text}", f"-IPTC:Caption-Abstract={text}", f"-XMP-dc:Description={text}",
             f"-IPTC:Keywords={keyword}", f"-XMP-dc:Subject={keyword}"]
     mode = common.load_config()["metadata_date"]
     if mode == "year" and year:
@@ -44,10 +42,31 @@ def write(path, text, keyword, year, taken=None):
         args += [f"-EXIF:DateTimeOriginal={date}", f"-EXIF:CreateDate={date}", f"-XMP-photoshop:DateCreated={taken.strftime('%Y-%m-%d')}"]
     else:
         args += ["-EXIF:DateTimeOriginal=", "-EXIF:CreateDate=", "-XMP-photoshop:DateCreated="]
-    subprocess.run(args + [path], check=True)
+    return args
 
 
-def export_photo(album, d, j, chapter, caps=None):
+COMMON_ARGS = ["-q", "-overwrite_original", "-charset", "iptc=UTF8", "-IPTC:CodedCharacterSet=UTF8"]
+
+
+def write(path, text, keyword, year, taken=None):
+    if os.path.exists(EXIFTOOL):
+        subprocess.run([EXIFTOOL] + COMMON_ARGS + tag_args(text, keyword, year, taken) + [path], check=True)
+
+
+def write_many(jobs):
+    """jobs = [(path, args)] — ONE exiftool process for the whole album instead of one per photo
+    (an album of 130 photos takes a second instead of half a minute)."""
+    if not jobs or not os.path.exists(EXIFTOOL):
+        return
+    lines = []
+    for path, args in jobs:
+        lines += COMMON_ARGS + args + [path, "-execute"]
+    subprocess.run([EXIFTOOL, "-@", "-"], input="\n".join(lines) + "\n", text=True, check=True, capture_output=True)
+
+
+def export_photo(album, d, j, chapter, caps=None, jobs=None):
+    """Copies the photo (and its back) into the export folder. With jobs given, the exiftool
+    arguments are collected there instead of being run at once."""
     out = folder(album)
     os.makedirs(out, exist_ok=True)
     src = common.best_source(d, j)
@@ -59,12 +78,16 @@ def export_photo(album, d, j, chapter, caps=None):
     path = os.path.join(out, f"{j}.jpg")
     shutil.copyfile(src, path)
     taken = common.capture_time(j.rsplit("_", 1)[0])
-    write(path, text, keyword, year, taken)
+    todo = [(path, tag_args(text, keyword, year, taken))]
     back = common.back_of(album, d).get(j)
     if back and common.best_source(d, back):
         bp = os.path.join(out, f"{j}_back.jpg")
         shutil.copyfile(common.best_source(d, back), bp)
-        write(bp, f"Back of photo: {text}" if text else "Back of photo", keyword, year, taken)
+        todo.append((bp, tag_args(f"Back of photo: {text}" if text else "Back of photo", keyword, year, taken)))
+    if jobs is None:
+        write_many(todo)
+    else:
+        jobs += todo
     return path
 
 
@@ -79,11 +102,13 @@ def export_album(name):
         return
     caps = common.load_captions()
     chapters = chapters_of(album, d)
-    done = [export_photo(album, d, j, ch, caps) for j, ch in chapters.items()]
+    jobs = []
+    done = [export_photo(album, d, j, ch, caps, jobs) for j, ch in chapters.items()]
+    write_many(jobs)
     # remove copies of photos that are no longer in this album (moved to another album) —
     # these are generated copies; originals and working files are never touched
     keep = {f"{j}.jpg" for j in chapters} | {f"{j}_back.jpg" for j in chapters}
-    for f in os.listdir(folder(album)):
+    for f in os.listdir(folder(album)) if os.path.isdir(folder(album)) else []:
         if f.lower().endswith(".jpg") and f not in keep:
             os.remove(os.path.join(folder(album), f))
     note = "" if os.path.exists(EXIFTOOL) else " (exiftool missing — copies without captions)"
