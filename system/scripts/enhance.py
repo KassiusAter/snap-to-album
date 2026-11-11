@@ -104,16 +104,28 @@ class Faces:
         finally:
             os.chdir(cwd)
 
+    # Above this size faces are restored on a smaller copy: on a full-resolution phone shot of a
+    # class photo (30 faces, 4000 px) GFPGAN took about a minute per photo, at 2400 px a few seconds.
+    # Only the change GFPGAN makes is scaled back up and added to the full-size photo, so everything
+    # that is not a face keeps its full resolution.
+    MAX_SIDE = 2400
+
     def apply(self, img, strength):
+        h, w = img.shape[:2]
+        k = min(1.0, self.MAX_SIDE / max(h, w))
+        work = cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA) if k < 1 else img
         cwd = os.getcwd()
         os.chdir(common.MODELS)
         try:
-            _, faces, out = self.restorer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
+            _, faces, out = self.restorer.enhance(work, has_aligned=False, only_center_face=False, paste_back=True)
         finally:
             os.chdir(cwd)
         if not faces:
             return img, 0
-        return cv2.addWeighted(out, strength, img, 1 - strength, 0), len(faces)
+        if k == 1:
+            return cv2.addWeighted(out, strength, img, 1 - strength, 0), len(faces)
+        change = cv2.resize(out.astype(np.float32) - work.astype(np.float32), (w, h), interpolation=cv2.INTER_CUBIC)
+        return np.clip(img.astype(np.float32) + strength * change, 0, 255).astype(np.uint8), len(faces)
 
 
 def face_strength(option):

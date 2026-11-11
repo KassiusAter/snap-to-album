@@ -72,7 +72,7 @@ All scripts: `system/.venv/bin/python system/scripts/<name>.py`, run from the pr
 | `tool_test.py "<photo>"` | **Mandatory first-run step**: every enhancement option on one of your photos, comparison page with a slider | Restoration is a matter of taste and face restorers can alter features — you decide, on your own photo |
 | `config.py [key value]` | Shows / changes settings | Every processing script refuses to run until the base enhancement is chosen |
 | `convert.py <album>` | HEIC → full-size JPG + previews; lists snapshots in shooting order with time gaps | `sips` reads HEIC without extra software; the order reveals backs and close-ups |
-| `detect_photos.py <album>` | Finds every photo on a page (or one print on a table), straightens it, numbered check sheet | OpenCV contour detection; `manual_corners.json` / `rotate.json` for the rare misses |
+| `detect_photos.py <album>` | Finds every photo on a page (or one print on a table), straightens it, numbered check sheet | OpenCV contour detection; for a single print every detector proposes and the largest plausible shape wins. Misses: `manual_corners.json` — rough boxes (`"approx"`) are snapped onto the real photo edges, see *Light backgrounds* below; `rotate.json` for sideways photos |
 | `backs.py <album>` | Proposes back-side pairs | A back is recognized by content (plain paper with writing) **and** position (shot right after its front) — time alone is not reliable |
 | `enhance.py <album>` | Applies the chosen look: colors → colorization → faces → upscaling | Separate logic for black-and-white, faded color prints, clippings and back sides |
 | `ai_models.py` | Optional AI extras: Real-ESRGAN upscaling, ECCV16 colorization | Local PyTorch on the GPU; weights downloaded only when used |
@@ -89,6 +89,47 @@ All scripts: `system/.venv/bin/python system/scripts/<name>.py`, run from the pr
 The album content is described by `system/work/<album>/album.json` — see
 `.claude/skills/snap-to-album/album-format.md`.
 
+## Light backgrounds and touching photos
+
+Automatic detection looks for photos that are **lighter than their surroundings** (a brightness
+threshold). That is reliable on a dark album page. It fails when:
+
+- prints lie on a **light wooden table** or the album has light pages — the white photo border is
+  about as bright as the wood, so photo and table merge into one shape, or the photo is not found at
+  all;
+- photos **touch or overlap** on the page — they merge into one shape;
+- a close-up shows a strip of dark page on one side and the table on another — choosing the method
+  by background brightness picked the wrong one (now all methods propose and the largest
+  plausible shape wins).
+
+With prints photographed on a light table, about every second snapshot can need help.
+Typing exact corners by eye is slow and never quite exact, so `manual_corners.json` accepts
+**rough boxes**:
+
+```json
+{"IMG_0012": {"approx": [[120, 80, 760, 590], [[800, 60], [1500, 90], [1490, 610], [790, 580]]]}}
+```
+
+(1600 px preview coordinates; a box `[x0, y0, x1, y1]` or four corners per photo). `snap_corners`
+then moves and tilts each edge within ±3 % onto the strongest brightness step — the real paper
+edge — and intersects the four edges, so the crop is straight and exact even if the box was a few
+pixels off. Claude reads the boxes from a preview with a 10 % grid drawn over it.
+
+Limits, found while building it: the rough box has to be closer to the paper edge than to the
+picture edge inside a white border (≈1–2 % off is fine) — otherwise the stronger picture edge wins
+and the white border is cut off. Preferring the "outermost strong edge" instead was tried and
+rejected: on real pages it jumped to an overlapping neighbour or the page edge.
+
+**Tried and not included: Segment Anything (SAM).** Meta's segmentation model, run locally, sounded
+like the fix. On album photos it was not: a point in the middle of a print selected a sweater or a
+face rather than the print, a box around the whole snapshot returned the table or a face, and with
+an accurate box it only matched what `snap_corners` already does — while adding a 375 MB download
+and (on Apple GPUs) a crash, because its automatic mode needs float64 numbers that Metal does not
+support. Rough boxes + edge snapping are smaller, faster and predictable.
+
+**Tip for photographing:** a dark, plain background (a black cloth, the dark album page itself)
+makes automatic detection work almost every time.
+
 ## Enhancement options
 
 Chosen on the first run, changeable any time (`config.py enhancement …`, then `enhance.py` and
@@ -100,6 +141,11 @@ Chosen on the first run, changeable any time (`config.py enhancement …`, then 
 | `colors` | + automatic color and contrast restoration (faded colors, yellowed black-and-white) — OpenCV, no neural network |
 | `colors+faces50` | + gentle face restoration (GFPGAN v1.4 mixed 50 % with the original, so faces keep their real features) |
 | `colors+faces100` | + full face restoration |
+
+Face restoration works on a copy of at most 2400 px: on a full-resolution phone shot of a class
+photo (30 faces, 4000+ px) it took about a minute per photo, at 2400 px a few seconds. Only the
+change it makes is enlarged back and added to the full-size photo, so everything that is not a face
+keeps its full resolution.
 
 **Optional AI extras** (off by default, also shown on the test photo):
 

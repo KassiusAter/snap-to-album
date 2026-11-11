@@ -71,9 +71,17 @@ All commands below run from the project folder: `system/.venv/bin/python system/
    photo that is also on a page), or **skip**. If a name was already used by another photo,
    `convert` gives the snapshot an id like `IMG_0012-2` — always use the ids it prints.
 4. `PY detect_photos <album>` cuts out and straightens every photo; check
-   `system/work/<album>/check/_overview.jpg`. Fix misses in `manual_corners.json` (corners in the
-   1600 px preview, or `"whole"` / `"single"`) and sideways photos in `rotate.json`
-   (`{"IMG_0004_1": 90}`, clockwise); re-run for those snapshots.
+   `system/work/<album>/check/_overview.jpg`. Fix misses in `manual_corners.json` and sideways
+   photos in `rotate.json` (`{"IMG_0004_1": 90}`, clockwise); re-run for those snapshots.
+   - Photos on a **light table or light page**, or **touching each other**, are often missed or
+     merged — expect it, it is not a bug. Draw a 10 % grid over the 1600 px previews (a few per
+     sheet), read a **rough box** for each photo and write `{"<snapshot>": {"approx": [[x0, y0, x1,
+     y1], …]}}` in preview pixels; every edge is snapped onto the real photo edge. Stay within
+     ~1–2 % of the paper edge (closer to it than to the picture inside a white border). Exact
+     corners (a plain list) or `"whole"` / `"single"` also work. Details: TECHNICAL.md →
+     *Light backgrounds*.
+   - Check every re-run on a contact sheet before enhancing; a skewed box usually means one rough
+     edge was too far off.
 5. Newspaper clippings, cartoons, postcards: list their photo ids in
    `system/work/<album>/clippings.json` (`["IMG_0010_3"]`) **before enhancing**, so they get only the
    gentle treatment (the build also re-checks this).

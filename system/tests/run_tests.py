@@ -27,6 +27,7 @@ SYSTEM = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(SYSTEM, "scripts"))
 import common  # noqa: E402
 import photos_album  # noqa: E402
+import detect_photos  # noqa: E402
 
 
 # ---------- synthetic images ----------
@@ -243,6 +244,21 @@ class PaperAlbumWorkflow(unittest.TestCase):
 
 
 class Helpers(unittest.TestCase):
+    def test_snap_corners_light_table(self):
+        # a print with a white border on a LIGHT wood-like table — the case automatic detection
+        # misses; a rough box ~1 % off (as read from a preview with a grid) must snap onto the real edges
+        rng = np.random.default_rng(1)
+        table = np.full((1200, 1600, 3), (175, 195, 215), np.uint8)
+        grain = cv2.GaussianBlur(rng.normal(0, 40, (1200, 1600)).astype(np.float32), (0, 0), sigmaX=25, sigmaY=3)
+        table = np.clip(table + grain[:, :, None] + rng.normal(0, 4, table.shape), 0, 255).astype(np.uint8)
+        x0, y0, x1, y1 = 400, 300, 1200, 900
+        table[y0:y1, x0:x1] = 245
+        table[y0 + 80:y1 - 80, x0 + 80:x1 - 80] = cv2.resize(print_content(700, 500, 3), (x1 - x0 - 160, y1 - y0 - 160))
+        rough = detect_photos.approx_to_corners([x0 - 18, y0 + 15, x1 + 16, y1 - 14])
+        snapped = detect_photos.snap_corners(table, rough)
+        exact = detect_photos.approx_to_corners([x0, y0, x1, y1])
+        self.assertLess(np.abs(snapped - exact).max(), 8)
+
     def test_year(self):
         self.assertEqual(common.year("Grandma in the 1950s")[0], 1950)
         self.assertEqual(common.year("summer 1962, still there (2026)")[0], 1962)

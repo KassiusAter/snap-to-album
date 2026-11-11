@@ -46,7 +46,8 @@ Claude does all the technical work. You only answer simple questions.
 2. **Photograph** your album pages — with any phone (iPhone, Android) or camera; a scanner works
    too. Whole pages, straight from above, no flash, no glare. Tiny or precious photo? Add a
    close-up right after the page. Loose photo with writing on the back? Photograph the front, then
-   the back straight away.
+   the back straight away. A **dark, plain background** (a black cloth, the album page) works best;
+   on a light table Claude may need to help with cutting the photos out — it can, it just takes longer.
 3. **Copy** the photos into the **`New photos`** folder — AirDrop, a cable, a memory card or your
    cloud folder, whatever you normally use. iPhone HEIC, JPG, PNG and TIFF are all fine.
 4. **Double-click `RUN Snap to Album`.** Claude starts and creates your album.

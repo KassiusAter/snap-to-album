@@ -11,7 +11,16 @@ For verification it writes check/<snapshot>.jpg (numbered boxes) and check/_over
 Corrections in system/work/<album>/manual_corners.json, coordinates in the 1600 px PREVIEW:
   {"IMG_0001": "whole",                      use the whole snapshot (already cropped)
    "IMG_0002": "single",                     force single-photo detection
-   "IMG_0003": [[[x,y],[x,y],[x,y],[x,y]], …]}  explicit corners of each photo
+   "IMG_0003": [[[x,y],[x,y],[x,y],[x,y]], …],  exact corners of each photo
+   "IMG_0004": {"approx": [[x0,y0,x1,y1], [[x,y],[x,y],[x,y],[x,y]], …]}}
+                                             ROUGH box or corners of each photo — every edge is then
+                                             snapped onto the real photo edge (see snap_corners)
+
+Why "approx": automatic detection looks for photos that are LIGHTER than their surroundings. That
+works on a dark album page, but fails when photos lie on a light wooden table or a light page, or
+touch each other (the threshold merges them with the table / each other). Exact corners by eye are
+tedious and never quite exact; a rough box read from a preview with a grid (a few % off is fine)
+plus edge snapping gives straight, exact crops quickly.
 
 Rotation of individual crops in system/work/<album>/rotate.json (degrees clockwise):
   {"IMG_0004_1": 90, "IMG_0005_1": 180}
@@ -135,14 +144,74 @@ def single_photo_light(img):
     return order_corners(_quad(cv2.convexHull(c)) / k)
 
 
+def snap_corners(img, corners, band=0.03):
+    """Moves and tilts every edge of a rough quadrilateral within ±band (share of the image size)
+    onto the strongest brightness step across it — the border between the photo and whatever lies
+    around it — and returns the intersections of the four snapped edges as the new corners.
+    Works on light backgrounds too: it needs a step in brightness, not a lighter photo."""
+    h, w = img.shape[:2]
+    k = 1600 / max(h, w)
+    g = cv2.GaussianBlur(cv2.cvtColor(cv2.resize(img, None, fx=k, fy=k), cv2.COLOR_BGR2GRAY), (5, 5), 0)
+    gx, gy = cv2.Sobel(g, cv2.CV_32F, 1, 0), cv2.Sobel(g, cv2.CV_32F, 0, 1)
+    r = corners * k
+    d = band * max(g.shape)
+    t = np.linspace(0.1, 0.9, 60)[:, None]  # sample the middle of each edge (corners are often bent)
+    edges = []
+    for i in range(4):
+        a, b = r[i], r[(i + 1) % 4]
+        n = np.array([-(b - a)[1], (b - a)[0]]) / np.linalg.norm(b - a)
+        best, best_s = (a, b), -1.0
+        for da in np.linspace(-d, d, 25):
+            for db in np.linspace(-d, d, 25):
+                pa, pb = a + n * da, b + n * db
+                pts = pa + (pb - pa) * t
+                x = np.clip(pts[:, 0].astype(int), 0, g.shape[1] - 1)
+                y = np.clip(pts[:, 1].astype(int), 0, g.shape[0] - 1)
+                s = float(np.median(np.abs(gx[y, x] * n[0] + gy[y, x] * n[1])))
+                if s > best_s:
+                    best, best_s = (pa, pb), s
+        # The strongest step wins. Tried and rejected: "outermost strong edge" — on real pages it
+        # jumped to a neighbouring overlapping print or the page edge. Hence the rough box must be
+        # closer to the paper edge than to the image edge inside a white border (≈1–2 % is fine).
+        edges.append(best)
+    out = []
+    for i in range(4):
+        (p1, p2), (p3, p4) = edges[i - 1], edges[i]
+        try:
+            u = np.linalg.solve(np.array([p2 - p1, p3 - p4]).T, p3 - p1)
+            out.append(p1 + u[0] * (p2 - p1))
+        except np.linalg.LinAlgError:
+            out.append(r[i])
+    return order_corners(np.array(out, np.float32) / k)
+
+
+def approx_to_corners(item):
+    """[x0, y0, x1, y1] box or four [x, y] corners → 4×2 array."""
+    if len(item) == 4 and not isinstance(item[0], (list, tuple)):
+        x0, y0, x1, y1 = item
+        item = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
+    return order_corners(np.array(item, np.float32))
+
+
 def detect(img, mode=None):
     """Returns a list of corner sets (one per photo) and the mode that was used."""
     if mode != "single":
         rects = page_rectangles(img)
         if len(rects) >= 2 or mode == "page":
             return rects, "page"
-    c = single_photo_dark(img) if dark_background(img) else single_photo_light(img)
-    return ([c] if c is not None else []), "single"
+    # One photo: every detector proposes, the largest plausible quadrilateral wins. Choosing the
+    # detector by background brightness alone failed on prints lying on a light table next to a
+    # dark album page, or close-ups with a strip of page around them.
+    h, w = img.shape[:2]
+    candidates = page_rectangles(img)[:]
+    for f in (single_photo_dark, single_photo_light):
+        try:
+            candidates.append(f(img))
+        except cv2.error:
+            pass
+    area = lambda c: cv2.contourArea(c.astype(np.float32))
+    candidates = [c for c in candidates if c is not None and 0.12 * h * w < area(c) < 0.97 * h * w]
+    return ([max(candidates, key=area)] if candidates else []), "single"
 
 
 ROTATE = {90: cv2.ROTATE_90_CLOCKWISE, 180: cv2.ROTATE_180, 270: cv2.ROTATE_90_COUNTERCLOCKWISE}
@@ -160,6 +229,9 @@ def process(d, snapshot, manual, rotate=None):
     elif isinstance(m, list):
         scale = max(h, w) / 1600
         corners, mode = [order_corners(np.array(r, np.float32) * scale) for r in m], "manual"
+    elif isinstance(m, dict) and "approx" in m:
+        scale = max(h, w) / 1600
+        corners, mode = [snap_corners(img, approx_to_corners(r) * scale) for r in m["approx"]], "approx"
     else:
         corners, mode = detect(img, m)
     # remove this snapshot's old crops and their processed versions (they no longer match);
