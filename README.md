@@ -1,77 +1,58 @@
 # Snap to Album
 
-**Your old family albums, saved and enhanced — no tech skills needed.**
+**Save and restore your old family albums — no tech skills needed.**
 
-Photograph the pages with your phone → copy the photos into the `New photos` folder → double-click
-**RUN Snap to Album** → sit down with your grandparents and caption the photos together.
+Photograph the album pages with your phone, drop the photos into `New photos`, double-click
+**RUN Snap to Album** — then caption them together with your grandparents.
 
-**Already have thousands of photos in the Apple Photos app on your Mac?** Snap to Album finds your trips
-by time and place and offers two things *(experimental — see below)*:
-- **an offline album for captioning and private sharing** — the best shots, picked by the Photos app's
-  own aesthetic score, in the same kind of album file as above. Captions typed in the captioning
-  window also go **back onto the original photos in the Photos app** (their Caption field) — no
-  copies, no duplicates, synced by iCloud and searchable in Photos;
-- **a new album right in the Apple Photos app, and nothing else** — just order in your library: all photos
-  of the trip in one album next to your others, no files created, nothing copied or moved.
+Each album becomes one file that opens in any browser, even offline: chapters on a timeline, the
+handwriting from the pages, the back of each photo one click away. Copy it to a USB stick or send
+it to the family.
 
-You get a **private offline archive**: one file per album that opens in any web browser, even
-offline, and that you can copy to a USB stick or send to your family. Inside: chapters on a
-timeline, the handwriting from the pages, and the back of each photo just one click away.
+**You choose the look.** Before anything is processed, Claude shows one of your photos in every
+version side by side: just cropped · colors fixed · faces gently or fully restored, plus optional
+colorizing and enlarging. The unretouched photo always stays one click away.
 
-**You choose how your photos are restored — on one of your own photos, before anything is
-processed.** Claude shows the same photo in every version, with a slider to compare them: just
-cropped and straightened · colors and contrast fixed · faces gently touched up · faces fully
-restored — plus two optional AI extras: colorizing black-and-white photos and enlarging them.
-Pick what looks right to you; nothing is "improved" behind your back, and the unretouched photo
-always stays one click away in the album.
+**Captioning is like writing on the back of a photo.** Double-click, type *"Aunt Mary at the lake,
+summer 1962"*, press Enter. The caption is saved in the album and inside the photo file, so it
+travels with the photo wherever you copy it.
 
-**Captions as easy as writing on the back of a photo.** Your grandmother knows who is who — and she
-does not need to learn anything: double-click, the album opens, there is a box under every photo,
-she types *"Aunt Mary at the lake, summer 1962"* and presses Enter. That is all. Each caption is
-saved in two places at once: **in the album** and **inside the photo file itself** (its metadata), so the
-photo keeps its story even when it is copied to Apple Photos, another computer or a USB stick.
-**Albums made from the Apple Photos app go one step further:** each caption is written straight onto
-the original photo in Photos — on all your devices through iCloud, searchable, no copies.
+**Already use Apple Photos?** Claude can find your trips and turn them into albums — see
+[below](#albums-from-apple-photos-experimental).
 
-Claude does all the technical work. You only answer simple questions.
+Claude does all the technical work; you just answer simple questions.
 
-> **You need a Mac and Claude Code** — either the Claude desktop app or Claude Code in the Terminal.
-> It does not work on claude.ai in the browser: your photos are processed on your own computer,
-> which a web page cannot do. **Windows and Linux versions are in the works.**
+> **Needs a Mac and Claude Code** (desktop app or Terminal) — not claude.ai in the browser, because
+> the photos are processed on your own computer. Windows and Linux versions are in the works.
 
 ## How it works
 
-1. **Download** this project (green **Code** button → **Download ZIP**, then unzip) and put the
-   folder wherever you like.
-2. **Photograph** your album pages — with any phone (iPhone, Android) or camera; a scanner works
-   too. Whole pages, straight from above, no flash, no glare. Tiny or precious photo? Add a
-   close-up right after the page. Loose photo with writing on the back? Photograph the front, then
-   the back straight away. A **dark, plain background** (a black cloth, the album page) works best;
-   on a light table Claude may need to help with cutting the photos out — it can, it just takes longer.
-3. **Copy** the photos into the **`New photos`** folder — AirDrop, a cable, a memory card or your
-   cloud folder, whatever you normally use. iPhone HEIC, JPG, PNG and TIFF are all fine.
-4. **Double-click `RUN Snap to Album`.** Claude starts and creates your album.
-   *The very first time, macOS may block it — right-click it and choose Open.*
-   Prefer the Claude desktop app? Open this folder there and type **create a photo album**.
-5. **First time only:** Claude sets everything up by itself (it asks before downloading about
-   1.5 GB) and shows you one of your photos in several versions — *you* choose the look you like.
-6. **Caption the photos — ideally together with your parents or grandparents.** Next to your album
-   in the **`Albums`** folder you will find **`… – add captions`**. Double-click it: the album opens
-   with a box under every photo. Type what you know — who, where, when — and press Enter. No saving,
-   no menus: every caption goes straight into the album and into the photo file's own data.
-   Afterwards Claude can sort the photos by your captions, keeping them in chronological order.
+1. **Download** this project (green **Code** button → **Download ZIP**) and unzip it anywhere.
+2. **Photograph** the album pages with any phone or camera, or scan them:
+   - whole pages, straight from above, no flash, no glare
+   - a dark, plain background works best
+   - tiny photo? add a close-up right after the page
+   - writing on the back? photograph the back right after the front
+3. **Copy** the photos into **`New photos`** (HEIC, JPG, PNG, TIFF).
+4. **Double-click `RUN Snap to Album`.** The first time, macOS may block it — right-click it and
+   choose Open. In the Claude desktop app, open this folder and type **create a photo album**.
+5. **First time only:** Claude sets everything up (it asks before downloading about 1.5 GB) and
+   lets you choose the look.
+6. **Caption:** in `Albums`, double-click **`… – add captions`**, type and press Enter. Claude can
+   then sort the photos by your captions, keeping them in chronological order.
 
-## Albums from the Apple Photos app *(experimental)*
+## Albums from Apple Photos *(experimental)*
 
-Already have thousands of digital photos in the Apple Photos app on your Mac? Ask Claude to
-**"find trips in my Photos app"**. It looks at when and where your photos were taken, finds your trips and shows which
-of them are not in any album yet — *"Lisbon, 12–15 May 2019, 420 photos — no album yet"*. Pick the
-ones you want and Claude creates the albums in the Apple Photos app, including the photos from the airport
-on the way there and back. Nothing is copied or deleted; an album only points to photos you already
-have. Claude only looks into your Apple Photos library when you ask it to — never on its own, and macOS
-asks you for permission the first time. Claude can also pick the **best photos of a trip** (by Apple's own quality score, without
-near-duplicates, spread over all days) and turn them into a Snap to Album page for captioning and
-sharing — say *"make an album for captioning from the Lisbon trip"*.
+Ask Claude to **"find trips in my Photos app"**. It finds your trips by time and place and shows
+which ones have no album yet — *"Lisbon, 12–15 May 2019, 420 photos — no album yet"*. For each trip
+you can get:
+
+- **an album right in the Photos app** — all photos of the trip, including the airport on the way;
+  nothing is copied or moved;
+- **an offline album for captioning** — the best shots picked by Apple's quality score. Captions
+  you type also go onto the original photos in Photos, synced by iCloud.
+
+Claude opens your Photos library only when you ask, and macOS asks for permission the first time.
 
 ## What you see in the folder
 
@@ -82,42 +63,28 @@ Snap to Album/
   Albums/                    ← your finished albums
      1950–1959 Grandma.html                     the album — open it in any browser
      1950–1959 Grandma – add captions.command   double-click to type captions
-     Photos with captions/                      the photos as files, each carrying its caption (for Apple Photos)
+     Photos with captions/                      photo files carrying their captions
   system/                    ← the machinery — no need to open it
 ```
 
-## Your photos stay on your Mac
+## Private and offline
 
-- Your photos are processed **on your own computer** (its processor and graphics chip). Nothing is
-  uploaded to any cloud, website or photo service, and nothing is published.
-- The internet is used only once, to download the tools.
-- **One honest note:** Claude is an online assistant. If you allow it, Claude looks at small previews
-  of your photos to read handwriting and check its work — those previews are then sent to Anthropic
-  as part of your conversation, like any picture you show Claude. You decide on the first run; if you
-  say no, Claude never opens a photo and simply asks you instead.
+- Photos are processed **on your Mac**. Nothing is uploaded or published; the internet is used only
+  once, to download the tools. There is no "share online" button, on purpose.
+- **One honest note:** if you allow it, Claude looks at small previews to read handwriting and check
+  its work — those previews are sent to Anthropic like any picture you show Claude. You decide on
+  the first run; if you say no, Claude asks you instead.
 
-## Offline by design
+## Fair use
 
-Snap to Album makes **offline archives for personal and family use**. It has no "share online"
-button — on purpose. If you ever want to put an album on the internet, that is a separate step you
-would take yourself (Claude can help if you ask); please read the next section first.
+- **Photos have authors** — a family member or a studio. Sharing in the family is fine, publishing is not.
+- **Newspaper clippings and postcards** belong to their publishers.
+- **People in the photos** have a right to privacy — ask before putting them online, and use a password.
+- **Restored is not original.** The paper album stays the real record.
 
-## Fair use of your albums
+## More
 
-- **Photos have authors.** A photo belongs to whoever took it — often a family member, sometimes a
-  studio (weddings, school photos). Sharing within the family is fine; publishing openly is different.
-- **Newspaper clippings, cartoons and postcards** in old albums belong to their publishers. They stay
-  in your album because they are part of its story — but they are not yours to publish.
-- **People in the photos** have a right to privacy. Ask before putting recognizable people online,
-  and keep anything you share behind a password.
-- **Restored is not original.** Touching up faces, adding colors or enlarging changes a photo. The album
-  always keeps the unretouched version one click away, and the paper album stays the real record.
-
-## Need more?
-
-- **`TECHNICAL.md`** — how it works inside: every script and why, all settings (scanners, other
-  cameras, dates), the optional AI extras, privacy in detail, requirements.
-- **`THIRD_PARTY_NOTICES.md`** — the open-source tools this project builds on, their licenses, and a
-  note on commercial use.
-- License: MIT (`LICENSE`). Thank you to the authors of OpenCV, PyTorch, GFPGAN, BasicSR, facexlib,
-  Real-ESRGAN, *Colorful Image Colorization* (Zhang, Isola & Efros) and ExifTool.
+- **`TECHNICAL.md`** — how it works inside, all settings, privacy in detail.
+- **`THIRD_PARTY_NOTICES.md`** — open-source tools used, their licenses, commercial use.
+- License: MIT. Thanks to OpenCV, PyTorch, GFPGAN, BasicSR, facexlib, Real-ESRGAN,
+  *Colorful Image Colorization* (Zhang, Isola & Efros) and ExifTool.
